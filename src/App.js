@@ -7,16 +7,18 @@ import RepoCard from "./components/RepoCard/RepoCard";
 function App() {
   const octokit = new Octokit({
     // use access token from env for now
-    auth: process.env.GH_ACCESS_TOKEN,
+    auth: process.env.REACT_APP_GH_ACCESS_TOKEN,
   });
+
+  console.log(process.env)
 
   const [repos, setRepos] = useState([]);
   const [user, setUser] = useState(null);
 
   const getRepos = async () => {
-    const repos = await octokit.request(`GET /users/${process.env.GH_USER}}/repos`);
+    const repos = await octokit.request(`GET /users/${process.env.REACT_APP_GH_USER}/repos`);
     setRepos(repos.data);
-    const user = await octokit.request(`GET /users/${process.env.GH_USER}`);
+    const user = await octokit.request(`GET /users/${process.env.REACT_APP_GH_USER}`);
     setUser(user.data);
     return repos;
   };
