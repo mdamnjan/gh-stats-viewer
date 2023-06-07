@@ -20,11 +20,6 @@ const SummaryTab = ({ repo }) => {
         </span>
       </h6>
       <p className="card-text">{repo.description}</p>
-      {/* {repo.homepage && (
-        <a href={repo.homepage} className="btn btn-primary">
-          {repo.homepage} <ArrowUpRightSquare />
-        </a>
-      )} */}
     </BaseTab>
   );
 };
