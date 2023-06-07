@@ -8,6 +8,9 @@
     margin-left: 60px;
   }
 
-  /* .user-profile > h4 {
-    border-bottom: 2px solid var(--bs-border-color-translucent);
-  } */
+@media (max-width: 800px) {
+  .user-profile {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+}
