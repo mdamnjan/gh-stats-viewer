@@ -1,5 +1,6 @@
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
+import { BarChartLine, JournalCode } from "react-bootstrap-icons";
 
 import "./App.css";
 import Card from "./components/Card/Card";
@@ -41,7 +42,7 @@ function App() {
             <h4>{user?.bio}</h4>
           </div>
           <div className="contents">
-            <Tabs tabs={[{text: "Overview"}, {text: "Repositories"}]}/>
+            <Tabs tabs={[{text: "Overview", active: false, icon: <BarChartLine/>}, {text: "Repositories", active: true, icon: <JournalCode/>}]}/>
             <div className="repo-list">
               {repos.map((repo) => (
                 <Card repo={repo} />
