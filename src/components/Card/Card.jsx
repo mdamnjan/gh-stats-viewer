@@ -1,19 +1,35 @@
 import "./Card.css";
+
 import { getLastUpdatedString } from "../../utils";
 
-import { Star, Eye, Bezier2, ArrowUpRightSquare } from "react-bootstrap-icons";
-import { act } from "react-dom/test-utils";
 import CardNavBar from "./CardNavBar";
-import SummaryTab from "./Tabs/SummaryTab";
+import SummaryTab  from "./Tabs/SummaryTab";
+import ActivityTab from "./Tabs/ActivityTab";
+import MetricsTab from "./Tabs/MetricsTab";
+
+import { useState } from "react";
 
 const Card = ({ repo }) => {
-  console.log("Last updated", getLastUpdatedString(repo.updated_at));
+  const [currentTab, setCurrentTab] = useState(1);
+
+  const tabs = [
+    { id: 1, text: "Summary" },
+    { id: 2, text: "Activity" },
+    { id: 3, text: "Metrics" },
+  ];
+
   return (
     <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
       <div class="card-header">
-        <CardNavBar/>
+        <CardNavBar
+          tabs={tabs}
+          handleTabSelect={setCurrentTab}
+          currentTab={currentTab}
+        />
       </div>
-      <SummaryTab repo={repo}/>
+      {currentTab === 1 && <SummaryTab repo={repo} />}
+      {currentTab === 2 && <ActivityTab repo={repo} />}
+      {currentTab === 3 && <MetricsTab repo={repo} />}
       <div className="card-footer text-body-secondary">
         <h6>{getLastUpdatedString(repo.updated_at)}</h6>
       </div>
