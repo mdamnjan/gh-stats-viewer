@@ -2,8 +2,9 @@ import "./Card.css";
 import { getLastUpdatedString } from "../../utils";
 
 import { Star, Eye, Bezier2, ArrowUpRightSquare } from "react-bootstrap-icons";
+import { act } from "react-dom/test-utils";
 
-const Card = ({ repo }) => {
+const Card = ({ repo, activityTab }) => {
   console.log("Last updated", getLastUpdatedString(repo.updated_at));
   return (
     <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
@@ -43,12 +44,15 @@ const Card = ({ repo }) => {
             {repo.forks_count}
           </span>
         </h6>
-        <p className="card-text">{repo.description}</p>
+        <div className="chart">
+        {activityTab}
+        </div>
+        {/* <p className="card-text">{repo.description}</p>
         {repo.homepage && (
           <a href={repo.homepage} className="btn btn-primary">
             {repo.homepage} <ArrowUpRightSquare />
           </a>
-        )}
+        )} */}
       </div>
       <div className="card-footer text-body-secondary">
         <h6>{getLastUpdatedString(repo.updated_at)}</h6>

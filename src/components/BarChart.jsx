@@ -42,7 +42,7 @@ export const options = {
       min: 0,
       max: 100
     }
-  }
+  },
 };
 
 const BarChart = ({ inputData }) => {

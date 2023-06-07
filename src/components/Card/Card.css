@@ -12,3 +12,7 @@
     margin-right: 2px;
     vertical-align: bottom;
 }
+
+.chart {
+    max-height: 200px;
+}
