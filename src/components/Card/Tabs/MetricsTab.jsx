@@ -14,6 +14,8 @@ const MetricsTab = ({ repo }) => {
 
   const [languages, setLanguages] = useState([]);
   const [commits, setCommits] = useState([]);
+  const [issues, setIssues] = useState([]);
+  const [pulls, setPulls] = useState([]);
 
   useEffect(() => {
     const fetchCommits = async () => {
@@ -24,6 +26,24 @@ const MetricsTab = ({ repo }) => {
     };
 
     fetchCommits();
+
+    const fetchIssues = async () => {
+      const issues = await octokit.request(
+        `GET /repos/${process.env.REACT_APP_GH_USER}/${repo.name}/issues`
+      );
+      setIssues(issues.data);
+    };
+
+    fetchIssues();
+
+    const fetchPulls = async () => {
+      const pulls = await octokit.request(
+        `GET /repos/${process.env.REACT_APP_GH_USER}/${repo.name}/pulls`
+      );
+      setPulls(pulls.data);
+    };
+
+    fetchPulls();
 
     const fetchLanguageData = async () => {
       const languages = await octokit.request(
@@ -45,10 +65,10 @@ const MetricsTab = ({ repo }) => {
           <NumberWidget title="Commits" number={commits.length} />
         </div>
         <div className="chart-container">
-          <NumberWidget title="Commits" number={commits.length} />
+          <NumberWidget title="Open Issues" number={issues.length} />
         </div>
         <div className="chart-container">
-          <NumberWidget title="Commits" number={commits.length} />
+          <NumberWidget title="Open Pull Requests" number={pulls.length} />
         </div>
       </div>
     </BaseTab>
