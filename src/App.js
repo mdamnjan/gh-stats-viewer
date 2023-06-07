@@ -12,8 +12,6 @@ function App() {
     auth: process.env.REACT_APP_GH_ACCESS_TOKEN,
   });
 
-  console.log(process.env)
-
   const [repos, setRepos] = useState([]);
   const [user, setUser] = useState(null);
 
