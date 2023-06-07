@@ -5,6 +5,7 @@ import { BarChartLine, JournalCode } from "react-bootstrap-icons";
 import "./App.css";
 import Card from "./components/Card/Card";
 import Tabs from "./components/Tabs/Tabs";
+import ProfileSideBar from "./components/Profile/ProfileSideBar";
 
 function App() {
   const octokit = new Octokit({
@@ -30,15 +31,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div id="container">
-          <div className="user-profile">
-            <img
-              id="user-avatar"
-              alt="User's avatar"
-              src={user?.avatar_url}
-            ></img>
-            <h4>{user?.login}</h4>
-            <h4>{user?.bio}</h4>
-          </div>
+          <ProfileSideBar user={user} />
           <div className="contents">
             <Tabs tabs={[{text: "Overview", active: false, icon: <BarChartLine/>}, {text: "Repositories", active: true, icon: <JournalCode/>}]}/>
             <div className="repo-list">
