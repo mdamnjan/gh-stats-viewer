@@ -1,8 +1,10 @@
 import "./Card.css";
+import { getLastUpdatedString } from "../../utils";
 
 import { Star, Eye, Bezier2, ArrowUpRightSquare } from "react-bootstrap-icons";
 
 const Card = ({ repo }) => {
+  console.log("Last updated", getLastUpdatedString(repo.updated_at))
   return (
     <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
       <div className="card-body">
@@ -27,7 +29,7 @@ const Card = ({ repo }) => {
         </a>}
       </div>
       <div className="card-footer text-body-secondary">
-        <h6>Updated {repo.updated_at}</h6>
+        <h6>{getLastUpdatedString(repo.updated_at)}</h6>
       </div>
     </div>
   );
