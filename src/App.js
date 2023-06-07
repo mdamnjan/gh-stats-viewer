@@ -2,7 +2,7 @@ import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 
 import "./App.css";
-import RepoCard from "./components/RepoCard/RepoCard";
+import Card from "./components/Card/Card";
 import Tabs from "./components/Tabs/Tabs";
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
             <Tabs tabs={[{text: "Overview"}, {text: "Repositories"}]}/>
             <div className="repo-list">
               {repos.map((repo) => (
-                <RepoCard repo={repo} />
+                <Card repo={repo} />
               ))}
             </div>
           </div>
