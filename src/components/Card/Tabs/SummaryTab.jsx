@@ -4,7 +4,7 @@ import { Star, Eye, Bezier2, ArrowUpRightSquare } from "react-bootstrap-icons";
 
 const SummaryTab = ({ repo }) => {
   return (
-    <BaseTab>
+    <BaseTab repo={repo}>
       <h6 className="card-subtitle mb-2 text-body-secondary">
         <span className="badge rounded-pill text-bg-secondary">
           <Star />
