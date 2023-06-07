@@ -39,6 +39,8 @@
 
 #container {
   display: flex;
+  width: 100%;
+  margin: 60px
 }
 
 #user-avatar {
@@ -46,5 +48,10 @@
 }
 
 .user-profile {
-  margin: 20px;
+  margin: 60px;
+
+}
+.contents {
+  width: 100%;
+  margin: 60px
 }

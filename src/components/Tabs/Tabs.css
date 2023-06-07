@@ -1,0 +1,15 @@
+.tabs > ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.tab {
+    margin: 10px;
+    padding: 10px
+}
+
+.tab:hover {
+    background-color: rgb(83, 94, 106);
+    border-radius: 10px;
+}

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import "./App.css";
 import RepoCard from "./components/RepoCard/RepoCard";
+import Tabs from "./components/Tabs/Tabs";
 
 function App() {
   const octokit = new Octokit({
@@ -39,11 +40,8 @@ function App() {
             <h4>{user?.login}</h4>
             <h4>{user?.bio}</h4>
           </div>
-          <div>
-            <ul>
-              <li>Overview</li>
-              <li>Repositories</li>
-            </ul>
+          <div className="contents">
+            <Tabs tabs={[{text: "Overview"}, {text: "Repositories"}]}/>
             <div className="repo-list">
               {repos.map((repo) => (
                 <RepoCard repo={repo} />
