@@ -6,8 +6,9 @@ import { Bar } from "react-chartjs-2";
 import "./App.css";
 import Tabs from "./components/Tabs/Tabs";
 import ProfileSideBar from "./components/Profile/ProfileSideBar";
-import BarChart from "./components/BarChart";
+import BarChart from "./components/Charts/BarChart";
 import Card from "./components/Card/Card";
+import NumberWidget from "./components/Charts/NumberWidget";
 
 function App() {
   const octokit = new Octokit({
@@ -53,18 +54,8 @@ function App() {
                 ></Card>
               ))}
               <div className="dashboard">
-                <div data-bs-theme="dark" className="card">
-                  <div className="card-body">
-                    <h5 className="card-title">Public Repos</h5>
-                    <h1>{user?.public_repos}</h1>
-                  </div>
-                </div>
-                <div data-bs-theme="dark" className="card">
-                  <div className="card-body">
-                    <h5 className="card-title">Followers</h5>
-                    <h1>{user?.followers}</h1>
-                  </div>
-                </div>
+                <NumberWidget title="Public Repos" number={user?.public_repos}/>
+                <NumberWidget title="Followers" number={user?.followers}/>
               </div>
             </div>
           </div>

@@ -1,3 +1,9 @@
 .metrics-tab-container {
     max-height: 200px;
 }
+
+.card {
+    text-align: left;
+    margin: 20px 0px;
+    text-align: left;
+}

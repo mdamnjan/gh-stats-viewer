@@ -1,0 +1,11 @@
+const NumberWidget = ({ title, number }) => {
+  return (
+    <div data-bs-theme="dark" className="card">
+      <div className="card-body">
+        <h5 className="card-title">{title}</h5>
+        <h1>{number}</h1>
+      </div>
+    </div>
+  );
+};
+export default NumberWidget;
