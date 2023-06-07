@@ -38,8 +38,18 @@ const MetricsTab = ({ repo }) => {
   return (
     <BaseTab repo={repo}>
       <div className="metrics-tab-container">
-        <BarChart inputData={languages} />
-        <NumberWidget title="Number of Commits" number={commits.length} />
+        <div className="chart-container">
+          <BarChart inputData={languages} />
+        </div>
+        <div className="chart-container">
+          <NumberWidget title="Commits" number={commits.length} />
+        </div>
+        <div className="chart-container">
+          <NumberWidget title="Commits" number={commits.length} />
+        </div>
+        <div className="chart-container">
+          <NumberWidget title="Commits" number={commits.length} />
+        </div>
       </div>
     </BaseTab>
   );
