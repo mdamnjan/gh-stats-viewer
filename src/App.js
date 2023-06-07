@@ -17,7 +17,6 @@ function App() {
 
   const [repos, setRepos] = useState([]);
   const [user, setUser] = useState(null);
-  const [languages, setLanguages] = useState([]);
 
   const getRepos = async () => {
     const repos = await octokit.request(
@@ -29,20 +28,11 @@ function App() {
     );
     setUser(user.data);
 
-    if (repos && repos.data && repos.data[0]) {
-      console.log("repos data", repos.data);
-      const languages = await octokit.request(
-        "GET /repos/mdamnjan/mdamnjan.github.io/languages"
-      );
-      setLanguages(languages.data);
-    }
     return repos;
   };
   useEffect(() => {
     getRepos();
   }, []);
-
-  console.log(languages);
 
   return (
     <div className="App">
@@ -60,7 +50,6 @@ function App() {
               {repos.map((repo) => (
                 <Card
                   repo={repo}
-                  activityTab={<BarChart inputData={languages} />}
                 ></Card>
               ))}
               <div className="dashboard">
@@ -74,11 +63,6 @@ function App() {
                   <div className="card-body">
                     <h5 className="card-title">Followers</h5>
                     <h1>{user?.followers}</h1>
-                  </div>
-                </div>
-                <div data-bs-theme="dark" className="card">
-                  <div className="card-body">
-                    <BarChart inputData={languages} />
                   </div>
                 </div>
               </div>
