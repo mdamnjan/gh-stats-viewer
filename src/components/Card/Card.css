@@ -6,8 +6,6 @@
 
 .badge {
     margin-right: 4px;
-    display: flex;
-    align-items: center;
 }
 
 .badge > svg {
