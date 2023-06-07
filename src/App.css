@@ -40,18 +40,20 @@
 #container {
   display: flex;
   width: 100%;
-  margin: 60px
 }
 
-#user-avatar {
-  border-radius: 50%;
-}
-
-.user-profile {
-  margin: 60px;
-
-}
 .contents {
-  width: 100%;
+  flex-grow: 1;
   margin: 60px
 }
+
+@media (max-width: 800px) {
+  .contents {
+    margin: 20px;
+  }
+
+  #container {
+    flex-direction: column;
+  }
+ }
+

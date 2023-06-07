@@ -2,13 +2,18 @@ import "./Tabs.css"
 
 const Tabs = ({ tabs }) => {
   return (
-    <div className="tabs">
-      <ul>
+    <nav className="tabs">
+      <ul data-bs-theme="dark" class="nav nav-tabs ">
         {tabs.map((tab) => (
-          <li className="tab">{tab.text}</li>
+          <li className="nav-item">
+            <button className={tab.active? "nav-link active": "nav-link"} aria-current="page">
+              {tab.icon}
+              {tab.text}
+            </button>
+          </li>
         ))}
       </ul>
-    </div>
+    </nav>
   );
 };
 export default Tabs;
