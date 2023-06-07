@@ -45,7 +45,7 @@
 
 .contents {
   flex-grow: 1;
-  margin: 60px
+  margin: 60px;
 }
 
 @media (max-width: 800px) {

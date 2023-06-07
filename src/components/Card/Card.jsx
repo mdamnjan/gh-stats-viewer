@@ -3,11 +3,12 @@ import "./Card.css";
 import { getLastUpdatedString } from "../../utils";
 
 import CardNavBar from "./CardNavBar";
-import SummaryTab  from "./Tabs/SummaryTab";
+import SummaryTab from "./Tabs/SummaryTab";
 import ActivityTab from "./Tabs/ActivityTab";
 import MetricsTab from "./Tabs/MetricsTab";
 
 import { useState } from "react";
+import { ArrowUpRightSquare } from "react-bootstrap-icons";
 
 const Card = ({ repo }) => {
   const [currentTab, setCurrentTab] = useState(1);
@@ -32,6 +33,11 @@ const Card = ({ repo }) => {
       {currentTab === 3 && <MetricsTab repo={repo} />}
       <div className="card-footer text-body-secondary">
         <h6>{getLastUpdatedString(repo.updated_at)}</h6>
+        {repo.homepage && (
+          <a href={repo.homepage} className="btn btn-primary">
+            <ArrowUpRightSquare />
+          </a>
+        )}
       </div>
     </div>
   );
