@@ -9,6 +9,10 @@
     flex-wrap: wrap;
 }
 
+.activity-tab-container {
+    display: flex;
+}
+
 .chart-container {
     margin-right: 10px
 }
