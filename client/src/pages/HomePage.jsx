@@ -13,7 +13,9 @@ const HomePage = () => {
         `https://api.github.com/search/users?q=${searchTerm}`
       );
     };
-    searchUsers(e.target.searchField.value).then((res)=>setSearchResults(res.data));
+    searchUsers(e.target.searchField.value).then((res) =>
+      setSearchResults(res.data)
+    );
   };
 
   return (
@@ -37,9 +39,33 @@ const HomePage = () => {
             <Search />
           </button>
         </div>
+        {searchResults.total_count === 0 && (
+          <p class="fw-lighter">No search results found</p>
+        )}
       </form>
-      {searchResults.total_count===0 && <p class="fw-lighter">No search results found</p>}
-      {searchResults.items && searchResults.items.map((user)=><div>{user.login}</div>)}
+      <div class="search-results" style={{ width: "60%", margin: "auto" }}>
+        {searchResults.items &&
+          searchResults.items.map((user) => (
+            <div
+              data-bs-theme="dark"
+              key={`user-${user.login}`}
+              style={{ padding: "20px", display: "block" }}
+              className="card"
+            >
+              <img
+                style={{
+                  borderRadius: "50%",
+                  maxWidth: "100px",
+                  display: "inline-block",
+                  marginRight: "15px",
+                }}
+                alt="user's avatar"
+                src={user.avatar_url}
+              ></img>
+              <h1 style={{ display: "inline-block" }}> {user.login}</h1>
+            </div>
+          ))}
+      </div>
     </div>
   );
 };
