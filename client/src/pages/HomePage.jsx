@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { SearchHeart as Search } from "react-bootstrap-icons";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
 
   const search = (e) => {
     e.preventDefault();
@@ -47,6 +49,7 @@ const HomePage = () => {
         {searchResults.items &&
           searchResults.items.map((user) => (
             <div
+              onClick={() => navigate(`/users/${user.login}`)}
               data-bs-theme="dark"
               key={`user-${user.login}`}
               style={{ padding: "20px", display: "block" }}
