@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SearchHeart as Search } from "react-bootstrap-icons";
 
 const HomePage = () => {
-  const [users, setUsers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const search = (e) => {
     e.preventDefault();
@@ -13,7 +13,7 @@ const HomePage = () => {
         `https://api.github.com/search/users?q=${searchTerm}`
       );
     };
-    searchUsers(e.target.searchField.value).then((res)=>setUsers(res.data.items));
+    searchUsers(e.target.searchField.value).then((res)=>setSearchResults(res.data));
   };
 
   return (
@@ -38,7 +38,8 @@ const HomePage = () => {
           </button>
         </div>
       </form>
-      {users.map((user)=><div>{user.login}</div>)}
+      {searchResults.total_count===0 && <p class="fw-lighter">No search results found</p>}
+      {searchResults.items && searchResults.items.map((user)=><div>{user.login}</div>)}
     </div>
   );
 };
