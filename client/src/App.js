@@ -9,6 +9,7 @@ import Tabs from "./components/Tabs/Tabs";
 import ProfileSideBar from "./components/Profile/ProfileSideBar";
 import BarChart from "./components/BarChart";
 import Card from "./components/Card/Card";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const [repos, setRepos] = useState([]);
@@ -49,7 +50,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div id="container">
-          <ProfileSideBar user={userData} />
+          <HomePage/>
+          {/* <ProfileSideBar user={userData} />
           <div className="contents">
             <Tabs
               tabs={[
@@ -84,7 +86,7 @@ function App() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </header>
     </div>
