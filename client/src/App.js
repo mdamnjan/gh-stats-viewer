@@ -1,4 +1,5 @@
 import HomePage from "./pages/HomePage";
+import RepoPage from "./pages/RepoPage";
 import UserPage from "./pages/UserPage";
 
 import { Routes, Route, BrowserRouter } from "react-router-dom";
@@ -12,6 +13,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/users/:username" element={<UserPage />} />
+              <Route path="/:username/:repo" element={<RepoPage />} />
             </Routes>
           </BrowserRouter>
         </div>

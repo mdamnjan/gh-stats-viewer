@@ -4,7 +4,7 @@ import { BarChartLine, JournalCode } from "react-bootstrap-icons";
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import "../App.css";
 import Tabs from "../components/Tabs/Tabs";
@@ -17,10 +17,9 @@ const UserPage = () => {
   const [userData, setUserData] = useState(null);
   const [languages, setLanguages] = useState([]);
 
-  let  { username } = useParams()
+  const navigate = useNavigate();
 
-  // TODO: this should be based on the searched user/repo
-//   const placeholderRepo = "mdamnjan.github.io";
+  let { username } = useParams();
 
   const getRepos = async () => {
     const repos = await axios.get(
@@ -59,6 +58,7 @@ const UserPage = () => {
         <div className="repo-list">
           {repos.map((repo) => (
             <Card
+              onClick={() => navigate(`/${username}/${repo.name}`)}
               repo={repo}
               activityTab={<BarChart inputData={languages} />}
             ></Card>

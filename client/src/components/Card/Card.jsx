@@ -10,9 +10,8 @@ import MetricsTab from "./Tabs/MetricsTab";
 import { useState } from "react";
 import { ArrowUpRightSquare } from "react-bootstrap-icons";
 
-const Card = ({ repo }) => {
+const Card = ({ repo, onClick }) => {
   const [currentTab, setCurrentTab] = useState(1);
-
   const tabs = [
     { id: 1, text: "Summary" },
     { id: 2, text: "Activity" },
@@ -20,7 +19,7 @@ const Card = ({ repo }) => {
   ];
 
   return (
-    <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
+    <div onClick={onClick} data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
       <div class="card-header">
         <CardNavBar
           tabs={tabs}
