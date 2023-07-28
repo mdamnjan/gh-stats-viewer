@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
-import { SearchHeart as Search } from "react-bootstrap-icons";
+import { SearchHeart as Search, Github } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
+
+  console.log("process", process.env);
 
   const search = (e) => {
     e.preventDefault();
@@ -24,6 +26,17 @@ const HomePage = () => {
     <div data-bs-theme="dark" style={{ width: "80%", margin: "auto" }}>
       <h1>Github Stats Viewer</h1>
       <p>Get an overview of a Github user's account</p>
+      <div>
+        <a
+          class="btn btn-primary"
+          href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}`}
+        >
+          Sign in with Github <Github style={{marginBottom: "3px"}}/>
+        </a>
+        <div style={{display: "flex", flexDirection: "column"}}>
+        <hr/>
+        </div>
+      </div>
       <form onSubmit={search}>
         <div
           style={{ maxWidth: "500px", margin: "auto" }}
