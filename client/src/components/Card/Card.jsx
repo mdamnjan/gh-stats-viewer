@@ -19,7 +19,7 @@ const Card = ({ repo, onClick }) => {
   ];
 
   return (
-    <div onClick={onClick} data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
+    <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
       <div class="card-header">
         <CardNavBar
           tabs={tabs}

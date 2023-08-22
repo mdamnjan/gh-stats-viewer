@@ -7,8 +7,6 @@ const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
-  console.log("process", process.env);
-
   const search = (e) => {
     e.preventDefault();
     // todo: call github api
@@ -27,14 +25,11 @@ const HomePage = () => {
       <h1>Github Stats Viewer</h1>
       <p>Get an overview of a Github user's account</p>
       <div>
-        <a
-          class="btn btn-primary"
-          href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}`}
-        >
-          Sign in with Github <Github style={{marginBottom: "3px"}}/>
+        <a class="btn btn-primary" href="http://localhost:4000/auth/github">
+          Sign in with Github <Github style={{ marginBottom: "3px" }} />
         </a>
-        <div style={{display: "flex", flexDirection: "column"}}>
-        <hr/>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <hr />
         </div>
       </div>
       <form onSubmit={search}>

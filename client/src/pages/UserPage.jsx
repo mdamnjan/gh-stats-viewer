@@ -23,11 +23,11 @@ const UserPage = () => {
 
   const getRepos = async () => {
     const repos = await axios.get(
-      `http://localhost:4000/repos?user=${username}`
+      `http://localhost:4000/repos?user=${username}`, {withCredentials: true}
     );
     setRepos(repos.data);
     const user = await axios.get(
-      `http://localhost:4000/profile-stats?user=${username}`
+      `http://localhost:4000/profile-stats?user=${username}`, {withCredentials: true}
     );
     setUserData(user.data);
 

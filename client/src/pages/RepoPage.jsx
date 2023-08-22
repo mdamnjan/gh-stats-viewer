@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 
 import "../App.css";
 
-
 const RepoPage = () => {
   let { username, repo } = useParams();
 
@@ -14,11 +13,13 @@ const RepoPage = () => {
 
   const getRepoData = async () => {
     const repoData = await axios.get(
-      `http://localhost:4000/repo-stats?user=${username}&repo=${repo}`
+      `http://localhost:4000/repo-stats?user=${username}&repo=${repo}`,
+      { withCredentials: true }
     );
     setRepoStats(repoData.data);
     const commits = await axios.get(
-      `http://localhost:4000/commits?user=${username}&repo=${repo}`
+      `http://localhost:4000/commits?user=${username}&repo=${repo}`,
+      { withCredentials: true }
     );
     setCommits(commits.data);
   };
@@ -27,12 +28,8 @@ const RepoPage = () => {
     getRepoData();
   }, []);
 
-  console.log(commits, repoStats)
+  console.log(commits, repoStats);
 
-  return (
-    <>
-
-    </>
-  );
+  return <></>;
 };
 export default RepoPage;
