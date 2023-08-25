@@ -102,7 +102,7 @@ app.get("/repos", async function (req, res) {
   const octokit = getOctokit(req);
 
   let repos;
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user.username == req.query.user) {
     // endpoint returns private repos as well if the Github App is authorized AND installed
     // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
     repos = await octokit.request(`GET /user/repos`);
