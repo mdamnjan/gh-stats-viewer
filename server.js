@@ -20,6 +20,7 @@ app.use(
 
 app.use(
   session({
+    name: "ghStatsSession",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -55,7 +56,7 @@ passport.use(
   )
 );
 
-function getOctokit() {
+function getOctokit(req) {
   let octokit;
   if (req.isAuthenticated()) {
     octokit = new Octokit({ auth: req.user.accessToken });
@@ -82,7 +83,7 @@ app.get(
 );
 
 app.get("/logout", function (req, res, next) {
-  res.clearCookie("connect.sid");
+  res.clearCookie("ghStatsSession");
   res.clearCookie("isGithubAuthenticated");
   req.logout(function (err) {
     // req.logout alone will not get rid of the session/cookie, see
@@ -98,7 +99,7 @@ app.get("/logout", function (req, res, next) {
 });
 
 app.get("/repos", async function (req, res) {
-  const octokit = getOctokit();
+  const octokit = getOctokit(req);
 
   let repos;
   if (req.isAuthenticated()) {
@@ -112,21 +113,21 @@ app.get("/repos", async function (req, res) {
 });
 
 app.get("/profile-stats", async function (req, res) {
-  const octokit = getOctokit();
+  const octokit = getOctokit(req);
 
   const profileStats = await octokit.request(`GET /users/${req.query.user}`);
   return res.json(profileStats.data);
 });
 
 app.get("/events", async function (req, res) {
-  const octokit = getOctokit();
+  const octokit = getOctokit(req);
 
   const events = await octokit.request(`GET /users/${req.query.user}/events`);
   return res.json(events.data);
 });
 
 app.get("/repo-stats", async function (req, res) {
-  const octokit = getOctokit();
+  const octokit = getOctokit(req);
 
   const repoStats = await octokit.request(
     `GET /repos/${req.query.user}/${req.query.repo}`
@@ -140,7 +141,7 @@ app.get("/repo-stats", async function (req, res) {
 });
 
 app.get("/repos", async function (req, res) {
-  const octokit = getOctokit();
+  const octokit = getOctokit(req);
 
   const repos = await octokit.request(`GET /users/${req.query.user}/repos`);
   return res.json(repos.data);
