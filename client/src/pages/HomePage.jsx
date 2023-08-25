@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { SearchHeart as Search, Github } from "react-bootstrap-icons";
+import { SearchHeart as Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
@@ -9,7 +9,6 @@ const HomePage = () => {
 
   const search = (e) => {
     e.preventDefault();
-    // todo: call github api
     const searchUsers = async (searchTerm) => {
       return await axios.get(
         `https://api.github.com/search/users?q=${searchTerm}`
@@ -21,39 +20,38 @@ const HomePage = () => {
   };
 
   return (
-    <div data-bs-theme="dark" style={{ width: "80%", margin: "auto" }}>
-      <h1>Github Stats Viewer</h1>
-      <p>Get an overview of a Github user's account</p>
-      <div>
-        <a class="btn btn-primary" href="http://localhost:4000/auth/github">
-          Sign in with Github <Github style={{ marginBottom: "3px" }} />
-        </a>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <hr />
+    <div style={{ width: "80%", margin: "auto" }}>
+      <div style={{height: "50%"}}>
+        <h1>Github Stats Viewer</h1>
+        <p>Get an overview of a Github user's account</p>
+        <div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <hr />
+          </div>
         </div>
+        <form onSubmit={search}>
+          <div
+            style={{ maxWidth: "500px", margin: "auto" }}
+            class="input-group mb-3"
+          >
+            <input
+              name="searchField"
+              type="text"
+              class="form-control"
+              placeholder="Search for a Github user"
+              aria-label="Searchbar"
+              aria-describedby="basic-addon2"
+            />
+            <button type="submit" class="btn btn-primary" id="basic-addon2">
+              <Search />
+            </button>
+          </div>
+          {searchResults.total_count === 0 && (
+            <p class="fw-lighter">No search results found</p>
+          )}
+        </form>
       </div>
-      <form onSubmit={search}>
-        <div
-          style={{ maxWidth: "500px", margin: "auto" }}
-          class="input-group mb-3"
-        >
-          <input
-            name="searchField"
-            type="text"
-            class="form-control"
-            placeholder="Search for a Github user"
-            aria-label="Searchbar"
-            aria-describedby="basic-addon2"
-          />
-          <button type="submit" class="btn btn-primary" id="basic-addon2">
-            <Search />
-          </button>
-        </div>
-        {searchResults.total_count === 0 && (
-          <p class="fw-lighter">No search results found</p>
-        )}
-      </form>
-      <div class="search-results" style={{ width: "60%", margin: "auto" }}>
+      <div class="search-results" style={{ width: "60%", margin: "auto", height: "50%"}}>
         {searchResults.items &&
           searchResults.items.map((user) => (
             <div
