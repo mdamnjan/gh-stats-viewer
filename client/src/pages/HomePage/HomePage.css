@@ -1,0 +1,40 @@
+.search-bar, .search-results {
+    max-width: 700px;
+    margin: auto;
+    width: 90%;
+}
+
+#home-page-container {
+    width: 80%;
+    margin: auto;
+    top: 20%;
+    margin-top: 100px;
+}
+
+hr {
+    margin: auto !important;
+    padding: 10px;
+    max-width: 850px;
+}
+
+.user-img {
+    border-radius: 50%;
+    max-width: 100px;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.search-result {
+    padding: 20px;
+    display: block !important;
+}
+
+::-ms-clear {
+    display: none;
+  }
+  
+  .form-control-clear {
+    z-index: 10;
+    pointer-events: auto;
+    cursor: pointer;
+  }

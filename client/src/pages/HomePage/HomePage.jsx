@@ -3,42 +3,47 @@ import { useState } from "react";
 import { SearchHeart as Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
+import "./HomePage.css";
+
 const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
+  const [pageNum, setPageNum] = useState(1);
+
   const navigate = useNavigate();
 
-  const search = (e) => {
-    e.preventDefault();
-    const searchUsers = async (searchTerm) => {
-      return await axios.get(
-        `https://api.github.com/search/users?q=${searchTerm}`
-      );
-    };
-    searchUsers(e.target.searchField.value).then((res) =>
-      setSearchResults(res.data)
+  const searchUsers = async (searchTerm, page) => {
+    return await axios.get(
+      `https://api.github.com/search/users?q=${searchTerm}&page=${page}&per_page=10`
     );
   };
 
+  const search = (e) => {
+    e.preventDefault();
+
+    // only perform the search if the user types something in
+    if (e.target.searchField.value) {
+      searchUsers(e.target.searchField.value, 1).then((res) => {
+        console.log(res.data);
+        setSearchResults(res.data);
+      });
+    }
+  };
+
   return (
-    <div style={{ width: "80%", margin: "auto" }}>
-      <div style={{height: "50%"}}>
+    <div id="home-page-container">
+      <div>
         <h1>Github Stats Viewer</h1>
-        <p>Get an overview of a Github user's account</p>
-        <div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <hr />
-          </div>
-        </div>
+        <p>
+          See stats related to a Github user's profile and their repositories
+        </p>
+        <hr />
         <form onSubmit={search}>
-          <div
-            style={{ maxWidth: "500px", margin: "auto" }}
-            class="input-group mb-3"
-          >
+          <div class="input-group mb-3 search-bar">
             <input
               name="searchField"
-              type="text"
+              type="search"
               class="form-control"
-              placeholder="Search for a Github user"
+              placeholder="Search for a user"
               aria-label="Searchbar"
               aria-describedby="basic-addon2"
             />
@@ -51,29 +56,26 @@ const HomePage = () => {
           )}
         </form>
       </div>
-      <div class="search-results" style={{ width: "60%", margin: "auto", height: "50%"}}>
+      <div class="search-results">
         {searchResults.items &&
           searchResults.items.map((user) => (
             <div
               onClick={() => navigate(`/users/${user.login}`)}
               data-bs-theme="dark"
               key={`user-${user.login}`}
-              style={{ padding: "20px", display: "block" }}
-              className="card"
+              className="card search-result"
             >
               <img
-                style={{
-                  borderRadius: "50%",
-                  maxWidth: "100px",
-                  display: "inline-block",
-                  marginRight: "15px",
-                }}
+                className="user-img"
                 alt="user's avatar"
                 src={user.avatar_url}
               ></img>
               <h1 style={{ display: "inline-block" }}> {user.login}</h1>
             </div>
           ))}
+        {searchResults.length !== 0 && (
+          <button class="btn btn-secondary" onClick={()=>setPageNum(pageNum+1)}>Show More</button>
+        )}
       </div>
     </div>
   );
