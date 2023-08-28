@@ -38,7 +38,8 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: redisStore,
+    // store: redisStore,
+    proxy: true,
     cookie: {
       secure: true,
       httpOnly: true,
