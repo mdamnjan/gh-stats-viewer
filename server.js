@@ -22,6 +22,9 @@ app.use(
   })
 );
 
+// https://www.npmjs.com/package/express-session#cookiesecure
+app.set('trust proxy', 1)
+
 // Initialize client.
 let redisClient = createClient({ url: process.env.REDIS_URL})
 redisClient.connect().catch(console.error)
