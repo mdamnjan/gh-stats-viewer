@@ -108,8 +108,8 @@ app.get(
 );
 
 app.get("/logout", function (req, res, next) {
-  res.clearCookie("ghStatsSession");
-  res.clearCookie("isGithubAuthenticated");
+  res.clearCookie("ghStatsSession", {domain: ".up.railway.app"});
+  res.clearCookie("isGithubAuthenticated", {domain: ".up.railway.app"});
   req.logout(function (err) {
     // req.logout alone will not get rid of the session/cookie, see
     // https://www.initialapps.com/properly-logout-passportjs-express-session-for-single-page-app/#:~:text=Using%20req.,pesky%20cookie%20on%20the%20client.
