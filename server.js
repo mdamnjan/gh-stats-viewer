@@ -47,6 +47,7 @@ app.use(
       secure: true,
       httpOnly: true,
       sameSite: "lax",
+      domain: ".up.railway.app"
     },
   })
 );
@@ -100,7 +101,7 @@ app.get(
   function (req, res) {
     // additional non-httpOnly cookie that can be read client-side
     // purely for nicer UX e.g. show "Log Out" button when user is already logged in
-    res.cookie("isGithubAuthenticated", true, { secure: true });
+    res.cookie("isGithubAuthenticated", true, { secure: true, domain: ".up.railway.app" });
     // Successful authentication, redirect home.
     res.redirect(FRONTEND_URL);
   }
