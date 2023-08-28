@@ -7,10 +7,12 @@ import passport from "passport";
 import GitHubStrategy from "passport-github2";
 import session from "express-session";
 import { Octokit } from "octokit";
+import RedisStore from "connect-redis"
+import {createClient} from "redis"
 
 dotenv.config();
 
-const FRONTEND_URL = process.env.FRONTEND_URL
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const app = express();
 app.use(cors({ credentials: true }));
@@ -20,17 +22,28 @@ app.use(
   })
 );
 
+// Initialize client.
+let redisClient = createClient({ url: process.env.REDIS_URL})
+redisClient.connect().catch(console.error)
+
+// Initialize store.
+let redisStore = new RedisStore({
+  client: redisClient,
+  prefix: "myapp:",
+})
+
 app.use(
   session({
     name: "ghStatsSession",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: redisStore,
     cookie: {
       secure: true,
       httpOnly: true,
-      sameSite: "lax"
-    }
+      sameSite: "lax",
+    },
   })
 );
 
@@ -83,7 +96,7 @@ app.get(
   function (req, res) {
     // additional non-httpOnly cookie that can be read client-side
     // purely for nicer UX e.g. show "Log Out" button when user is already logged in
-    res.cookie("isGithubAuthenticated", true);
+    res.cookie("isGithubAuthenticated", true, { secure: true });
     // Successful authentication, redirect home.
     res.redirect(FRONTEND_URL);
   }
