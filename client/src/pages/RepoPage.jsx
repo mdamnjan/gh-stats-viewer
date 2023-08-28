@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 import "../App.css";
+import { BACKEND_URL } from "../utils";
 
 const RepoPage = () => {
   let { username, repo } = useParams();
@@ -13,12 +14,12 @@ const RepoPage = () => {
 
   const getRepoData = async () => {
     const repoData = await axios.get(
-      `http://localhost:4000/repo-stats?user=${username}&repo=${repo}`,
+      `${BACKEND_URL}/repo-stats?user=${username}&repo=${repo}`,
       { withCredentials: true }
     );
     setRepoStats(repoData.data);
     const commits = await axios.get(
-      `http://localhost:4000/commits?user=${username}&repo=${repo}`,
+      `${BACKEND_URL}/commits?user=${username}&repo=${repo}`,
       { withCredentials: true }
     );
     setCommits(commits.data);

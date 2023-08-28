@@ -10,11 +10,13 @@ import { Octokit } from "octokit";
 
 dotenv.config();
 
+const FRONTEND_URL = process.env.FRONTEND_URL
+
 const app = express();
 app.use(cors({ credentials: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: FRONTEND_URL,
   })
 );
 
@@ -45,7 +47,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: `http://localhost:${port}/auth/github/callback`,
+      callbackURL: `https://gh-stats-viewer-api.up.railway.app/auth/github/callback`,
     },
     function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
@@ -71,14 +73,14 @@ app.get("/auth/github", passport.authenticate("github"));
 app.get(
   "/auth/github/callback",
   passport.authenticate("github", {
-    failureRedirect: "http://localhost:3000/login",
+    failureRedirect: `${FRONTEND_URL}/login`,
   }),
   function (req, res) {
     // additional non-httpOnly cookie that can be read client-side
     // purely for nicer UX e.g. show "Log Out" button when user is already logged in
     res.cookie("isGithubAuthenticated", true);
     // Successful authentication, redirect home.
-    res.redirect("http://localhost:3000/");
+    res.redirect(FRONTEND_URL);
   }
 );
 
@@ -94,7 +96,7 @@ app.get("/logout", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    res.redirect("http://localhost:3000/");
+    res.redirect(FRONTEND_URL);
   });
 });
 

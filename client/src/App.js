@@ -4,6 +4,7 @@ import { Github } from "react-bootstrap-icons";
 import HomePage from "./pages/HomePage";
 import RepoPage from "./pages/RepoPage";
 import UserPage from "./pages/UserPage";
+import { BACKEND_URL } from "./utils";
 
 function App() {
   const isLoggedIn = document.cookie.includes("isGithubAuthenticated");
@@ -11,12 +12,12 @@ function App() {
       <div className="App" data-bs-theme="dark">
         <header className="App-header">
           {isLoggedIn && (
-            <a class="btn btn-primary" href="http://localhost:4000/logout">
+            <a class="btn btn-primary" href={`${BACKEND_URL}/logout`}>
               Log out <Github style={{ marginBottom: "3px" }} />
             </a>
           )}
           {!isLoggedIn && (
-            <a class="btn btn-primary" href="http://localhost:4000/auth/github">
+            <a class="btn btn-primary" href={`${BACKEND_URL}/auth/github`}>
               Sign in with Github <Github style={{ marginBottom: "3px" }} />
             </a>
           )}

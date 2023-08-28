@@ -18,3 +18,5 @@ export const getLastUpdatedString = (lastUpdated) => {
   }
 };
 
+
+export const BACKEND_URL = "https://gh-stats-viewer-api.up.railway.app"

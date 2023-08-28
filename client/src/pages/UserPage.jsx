@@ -11,6 +11,7 @@ import Tabs from "../components/Tabs/Tabs";
 import ProfileSideBar from "../components/Profile/ProfileSideBar";
 import BarChart from "../components/BarChart";
 import Card from "../components/Card/Card";
+import { BACKEND_URL } from "../utils";
 
 const UserPage = () => {
   const [repos, setRepos] = useState([]);
@@ -23,11 +24,13 @@ const UserPage = () => {
 
   const getRepos = async () => {
     const repos = await axios.get(
-      `http://localhost:4000/repos?user=${username}`, {withCredentials: true}
+      `${BACKEND_URL}/repos?user=${username}`, {withCredentials: true}
     );
+
+    console.log(repos)
     setRepos(repos.data);
     const user = await axios.get(
-      `http://localhost:4000/profile-stats?user=${username}`, {withCredentials: true}
+      `${BACKEND_URL}/profile-stats?user=${username}`, {withCredentials: true}
     );
     setUserData(user.data);
 
