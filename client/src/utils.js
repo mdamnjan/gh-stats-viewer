@@ -19,4 +19,4 @@ export const getLastUpdatedString = (lastUpdated) => {
 };
 
 
-export const BACKEND_URL = "https://gh-stats-viewer-api.up.railway.app"
+export const BACKEND_URL = process.env.NODE_ENV === "production"? "https://gh-stats-viewer-api.up.railway.app": "http://localhost:4000"

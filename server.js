@@ -7,12 +7,15 @@ import passport from "passport";
 import GitHubStrategy from "passport-github2";
 import session from "express-session";
 import { Octokit } from "octokit";
-import RedisStore from "connect-redis"
-import {createClient} from "redis"
+import RedisStore from "connect-redis";
+import { createClient } from "redis";
 
 dotenv.config();
 
-const FRONTEND_URL = process.env.FRONTEND_URL;
+const port = process.env.PORT || 4000;
+
+const FRONTEND_URL = process.env.NODE_ENV == "production"? process.env.FRONTEND_URL : "http://localhost:3000";
+const BACKEND_URL = process.env.NODE_ENV == "production"? process.env.BACKEND_URL : `http://localhost:${port}` 
 
 const app = express();
 app.use(cors({ credentials: true }));
@@ -23,17 +26,38 @@ app.use(
 );
 
 // https://www.npmjs.com/package/express-session#cookiesecure
-app.set('trust proxy', 1)
+app.set("trust proxy", 1);
 
 // Initialize client.
-let redisClient = createClient({ url: process.env.REDIS_URL})
-redisClient.connect().catch(console.error)
+let redisClient = createClient({ url: process.env.REDIS_URL });
+redisClient.connect().catch(console.error);
 
 // Initialize store.
 let redisStore = new RedisStore({
   client: redisClient,
   prefix: "myapp:",
-})
+});
+
+let sessionCookieOptions, cookieOptions;
+if (process.env.NODE_ENV == "production") {
+  cookieOptions =  {
+    secure: true,
+    domain: ".up.railway.app"
+  }
+
+  sessionCookieOptions = {
+    httpOnly: true,
+    sameSite: "lax",
+    ...cookieOptions
+  };
+
+} else {
+  cookieOptions = {}
+
+  sessionCookieOptions = {
+    sameSite: "lax",
+  };
+}
 
 app.use(
   session({
@@ -43,19 +67,13 @@ app.use(
     saveUninitialized: false,
     // store: redisStore,
     proxy: true,
-    cookie: {
-      secure: true,
-      httpOnly: true,
-      sameSite: "lax",
-      domain: ".up.railway.app"
-    },
+    cookie: sessionCookieOptions,
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-const port = process.env.PORT || 4000;
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -70,7 +88,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: `https://gh-stats-viewer-api.up.railway.app/auth/github/callback`,
+      callbackURL: `${BACKEND_URL}/auth/github/callback`,
     },
     function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
@@ -101,15 +119,15 @@ app.get(
   function (req, res) {
     // additional non-httpOnly cookie that can be read client-side
     // purely for nicer UX e.g. show "Log Out" button when user is already logged in
-    res.cookie("isGithubAuthenticated", true, { secure: true, domain: ".up.railway.app" });
+    res.cookie("isGithubAuthenticated", true, cookieOptions);
     // Successful authentication, redirect home.
     res.redirect(FRONTEND_URL);
   }
 );
 
 app.get("/logout", function (req, res, next) {
-  res.clearCookie("ghStatsSession", {domain: ".up.railway.app"});
-  res.clearCookie("isGithubAuthenticated", {domain: ".up.railway.app"});
+  res.clearCookie("ghStatsSession", cookieOptions);
+  res.clearCookie("isGithubAuthenticated", cookieOptions);
   req.logout(function (err) {
     // req.logout alone will not get rid of the session/cookie, see
     // https://www.initialapps.com/properly-logout-passportjs-express-session-for-single-page-app/#:~:text=Using%20req.,pesky%20cookie%20on%20the%20client.
