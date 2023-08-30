@@ -17,22 +17,29 @@ const UserPage = () => {
   const [repos, setRepos] = useState([]);
   const [userData, setUserData] = useState(null);
   const [languages, setLanguages] = useState([]);
+  const [events, setEvents] = useState([]);
 
   const navigate = useNavigate();
 
   let { username } = useParams();
 
   const getRepos = async () => {
-    const repos = await axios.get(
-      `${BACKEND_URL}/repos?user=${username}`, {withCredentials: true}
-    );
+    const repos = await axios.get(`${BACKEND_URL}/repos?user=${username}`, {
+      withCredentials: true,
+    });
 
-    console.log(repos)
+    console.log(repos);
     setRepos(repos.data);
     const user = await axios.get(
-      `${BACKEND_URL}/profile-stats?user=${username}`, {withCredentials: true}
+      `${BACKEND_URL}/profile-stats?user=${username}`,
+      { withCredentials: true }
     );
     setUserData(user.data);
+
+    const events = await axios.get(`${BACKEND_URL}/events?user=${username}`, {
+      withCredentials: true,
+    });
+    setEvents(events.data);
 
     // if (repos && repos.data && repos.data[0]) {
     //   // console.log("repos data", repos.data);
@@ -48,6 +55,8 @@ const UserPage = () => {
     getRepos();
   }, []);
 
+  console.log(userData, repos, events);
+
   return (
     <>
       <ProfileSideBar user={userData} />
@@ -58,7 +67,27 @@ const UserPage = () => {
             { text: "Repositories", active: true, icon: <JournalCode /> },
           ]}
         />
-        <div className="repo-list">
+        <div style={{ display: "flex", gap: "10px" }}>
+          <div data-bs-theme="dark" className="card">
+            <div className="card-body">
+              <h5 className="card-title">Followers</h5>
+              <h1>{userData?.followers}</h1>
+            </div>
+          </div>
+          <div data-bs-theme="dark" className="card">
+            <div className="card-body">
+              <h5 className="card-title">Public Repos</h5>
+              <h1>{userData?.public_repos}</h1>
+            </div>
+          </div>
+          <div data-bs-theme="dark" className="card">
+            <div className="card-body">
+              <h5 className="card-title">Public Repos</h5>
+              <h1>{userData?.public_repos}</h1>
+            </div>
+          </div>
+        </div>
+        {/* <div className="repo-list">
           {repos.map((repo) => (
             <Card
               onClick={() => navigate(`/${username}/${repo.name}`)}
@@ -85,7 +114,7 @@ const UserPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
