@@ -1,14 +1,10 @@
 import express from "express";
-import axios from "axios";
 import * as dotenv from "dotenv";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import passport from "passport";
 import GitHubStrategy from "passport-github2";
-import session from "express-session";
 import { Octokit } from "octokit";
-import RedisStore from "connect-redis";
-import { createClient } from "redis";
+import cookieSession from "cookie-session";
 
 dotenv.config();
 
@@ -27,16 +23,6 @@ app.use(
 
 // https://www.npmjs.com/package/express-session#cookiesecure
 app.set("trust proxy", 1);
-
-// Initialize client.
-let redisClient = createClient({ url: process.env.REDIS_URL });
-redisClient.connect().catch(console.error);
-
-// Initialize store.
-let redisStore = new RedisStore({
-  client: redisClient,
-  prefix: "myapp:",
-});
 
 let sessionCookieOptions, cookieOptions;
 if (process.env.NODE_ENV == "production") {
@@ -60,16 +46,30 @@ if (process.env.NODE_ENV == "production") {
 }
 
 app.use(
-  session({
-    name: "ghStatsSession",
+  cookieSession({
+    name: 'session',
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: redisStore,
-    proxy: true,
-    cookie: sessionCookieOptions,
+    signed: true,
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    ...sessionCookieOptions
   })
-);
+)
+
+// https://github.com/jaredhanson/passport/issues/904
+app.use(function(request, response, next) {
+  if (request.session && !request.session.regenerate) {
+      request.session.regenerate = (cb) => {
+          cb()
+      }
+  }
+  if (request.session && !request.session.save) {
+      request.session.save = (cb) => {
+          cb()
+      }
+  }
+  next()
+})
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -90,10 +90,9 @@ passport.use(
       clientSecret: process.env.CLIENT_SECRET,
       callbackURL: `${BACKEND_URL}/auth/github/callback`,
     },
-    function (accessToken, refreshToken, profile, done) {
+    function (accessToken, profile, done) {
       process.nextTick(function () {
-        profile.accessToken = accessToken;
-        return done(null, profile);
+        return done(null, {id: profile.id, username: profile.username, token: accessToken});
       });
     }
   )
@@ -102,7 +101,7 @@ passport.use(
 function getOctokit(req) {
   let octokit;
   if (req.isAuthenticated()) {
-    octokit = new Octokit({ auth: req.user.accessToken });
+    octokit = new Octokit({ auth: req.user.token });
   } else {
     octokit = new Octokit({});
   }
@@ -129,11 +128,7 @@ app.get("/logout", function (req, res, next) {
   res.clearCookie("ghStatsSession", cookieOptions);
   res.clearCookie("isGithubAuthenticated", cookieOptions);
   req.logout(function (err) {
-    // req.logout alone will not get rid of the session/cookie, see
-    // https://www.initialapps.com/properly-logout-passportjs-express-session-for-single-page-app/#:~:text=Using%20req.,pesky%20cookie%20on%20the%20client.
-    req.session.destroy(function (err) {
-      res.send();
-    });
+    req.session = null
     if (err) {
       return next(err);
     }
