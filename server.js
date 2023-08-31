@@ -90,7 +90,7 @@ passport.use(
       clientSecret: process.env.CLIENT_SECRET,
       callbackURL: `${BACKEND_URL}/auth/github/callback`,
     },
-    function (accessToken, profile, done) {
+    function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
         return done(null, {id: profile.id, username: profile.username, token: accessToken});
       });
