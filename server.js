@@ -47,7 +47,7 @@ if (process.env.NODE_ENV == "production") {
 
 app.use(
   cookieSession({
-    name: 'session',
+    name: 'ghStatsSession',
     secret: process.env.SESSION_SECRET,
     signed: true,
     // Cookie Options
