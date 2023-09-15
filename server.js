@@ -10,8 +10,14 @@ dotenv.config();
 
 const port = process.env.PORT || 4000;
 
-const FRONTEND_URL = process.env.NODE_ENV == "production"? process.env.FRONTEND_URL : "http://localhost:3000";
-const BACKEND_URL = process.env.NODE_ENV == "production"? process.env.BACKEND_URL : `http://localhost:${port}` 
+const FRONTEND_URL =
+  process.env.NODE_ENV == "production"
+    ? process.env.FRONTEND_URL
+    : "http://localhost:3000";
+const BACKEND_URL =
+  process.env.NODE_ENV == "production"
+    ? process.env.BACKEND_URL
+    : `http://localhost:${port}`;
 
 const app = express();
 app.use(cors({ credentials: true }));
@@ -26,19 +32,18 @@ app.set("trust proxy", 1);
 
 let sessionCookieOptions, cookieOptions;
 if (process.env.NODE_ENV == "production") {
-  cookieOptions =  {
+  cookieOptions = {
     secure: true,
-    domain: ".up.railway.app"
-  }
+    domain: ".up.railway.app",
+  };
 
   sessionCookieOptions = {
     httpOnly: true,
     sameSite: "lax",
-    ...cookieOptions
+    ...cookieOptions,
   };
-
 } else {
-  cookieOptions = {}
+  cookieOptions = {};
 
   sessionCookieOptions = {
     sameSite: "lax",
@@ -47,33 +52,32 @@ if (process.env.NODE_ENV == "production") {
 
 app.use(
   cookieSession({
-    name: 'ghStatsSession',
+    name: "ghStatsSession",
     secret: process.env.SESSION_SECRET,
     signed: true,
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    ...sessionCookieOptions
+    ...sessionCookieOptions,
   })
-)
+);
 
 // https://github.com/jaredhanson/passport/issues/904
-app.use(function(request, response, next) {
+app.use(function (request, response, next) {
   if (request.session && !request.session.regenerate) {
-      request.session.regenerate = (cb) => {
-          cb()
-      }
+    request.session.regenerate = (cb) => {
+      cb();
+    };
   }
   if (request.session && !request.session.save) {
-      request.session.save = (cb) => {
-          cb()
-      }
+    request.session.save = (cb) => {
+      cb();
+    };
   }
-  next()
-})
+  next();
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -92,7 +96,11 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
-        return done(null, {id: profile.id, username: profile.username, token: accessToken});
+        return done(null, {
+          id: profile.id,
+          username: profile.username,
+          token: accessToken,
+        });
       });
     }
   )
@@ -106,6 +114,19 @@ function getOctokit(req) {
     octokit = new Octokit({});
   }
   return octokit;
+}
+
+async function getResource(req, res, url, next) {
+  let octokit = getOctokit(req);
+
+  try {
+    const result = await octokit.request(url);
+    return result.data;
+  } catch (error) {
+    res.status(error.status);
+    console.log("error", error);
+    return error;
+  }
 }
 
 app.get("/auth/github", passport.authenticate("github"));
@@ -128,7 +149,7 @@ app.get("/logout", function (req, res, next) {
   res.clearCookie("ghStatsSession", cookieOptions);
   res.clearCookie("isGithubAuthenticated", cookieOptions);
   req.logout(function (err) {
-    req.session = null
+    req.session = null;
     if (err) {
       return next(err);
     }
@@ -136,71 +157,86 @@ app.get("/logout", function (req, res, next) {
   });
 });
 
-app.get("/repos", async function (req, res) {
-  const octokit = getOctokit(req);
-
-  let repos;
+app.get("/repos", async function (req, res, next) {
+  let url;
   if (req.isAuthenticated() && req.user.username == req.query.user) {
     // endpoint returns private repos as well if the Github App is authorized AND installed
     // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
-    repos = await octokit.request(`GET /user/repos`);
+    url = `GET /user/repos`;
   } else {
-    repos = await octokit.request(`GET /users/${req.query.user}/repos`);
+    url = `GET /users/${req.query.user}/repos`;
   }
-  return res.json(repos.data);
+  const repos = await getResource(req, res, url, next);
+
+  return res.json(repos);
 });
 
-app.get("/profile-stats", async function (req, res) {
-  const octokit = getOctokit(req);
-
-  const profileStats = await octokit.request(`GET /users/${req.query.user}`);
-  return res.json(profileStats.data);
-});
-
-app.get("/events", async function (req, res) {
-  const octokit = getOctokit(req);
-
-  const events = await octokit.request(`GET /users/${req.query.user}/events`);
-  return res.json(events.data);
-});
-
-app.get("/repo-stats", async function (req, res) {
-  const octokit = getOctokit(req);
-
-  const repoStats = await octokit.request(
-    `GET /repos/${req.query.user}/${req.query.repo}`
+app.get("/profile-stats", async function (req, res, next) {
+  const profileStats = await getResource(
+    req,
+    res,
+    `GET /users/${req.query.user}`,
+    next
   );
 
-  const languages = await octokit.request(
-    `GET /repos/${req.query.user}/${req.query.repo}/languages`
+  return res.json(profileStats);
+});
+
+app.get("/events", async function (req, res, next) {
+  const events = await getResource(
+    req,
+    res,
+    `GET /users/${req.query.user}/events`,
+    next
   );
 
-  return res.json({ ...repoStats.data, languages: languages.data });
+  return res.json(events);
 });
 
-app.get("/repos", async function (req, res) {
-  const octokit = getOctokit(req);
-
-  const repos = await octokit.request(`GET /users/${req.query.user}/repos`);
-  return res.json(repos.data);
-});
-
-app.get("/commits", async function (req, res) {
-  let octokit;
-
-  const commits = await octokit.request(
-    `GET /repos/${req.query.user}/${req.query.repo}/commits`
+app.get("/repo-stats", async function (req, res, next) {
+  const repoStats = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}`,
+    next
   );
 
-  return res.json(commits.data);
+  const languages = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/languages`,
+    next
+  );
+
+  return res.json({ ...repoStats, languages: languages });
 });
 
-app.get("/rate_limit", async function (req, res) {
-  let octokit;
+app.get("/commits", async function (req, res, next) {
+  const commits = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/commits?per_page=${req.query.num_commits}`,
+    next
+  );
 
-  const rateLimit = await octokit.request("GET /rate_limit");
+  return res.json(commits);
+});
 
-  return res.json(rateLimit.data);
+app.get("/contributors", async function (req, res, next) {
+  const contributors = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/contributors`,
+    next
+  );
+
+  return res.json(contributors);
+});
+
+app.get("/rate_limit", async function (req, res, next) {
+  const rateLimit = await getResource(req, res, "GET /rate_limit", next);
+
+  return res.json(rateLimit);
 });
 
 app.listen(port, function () {
