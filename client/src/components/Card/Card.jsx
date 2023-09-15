@@ -8,7 +8,6 @@ import ActivityTab from "./Tabs/ActivityTab";
 import MetricsTab from "./Tabs/MetricsTab";
 
 import { useState } from "react";
-import { ArrowUpRightSquare } from "react-bootstrap-icons";
 
 const Card = ({ repo, onClick }) => {
   const [currentTab, setCurrentTab] = useState(1);
@@ -32,11 +31,9 @@ const Card = ({ repo, onClick }) => {
       {currentTab === 3 && <MetricsTab repo={repo} />}
       <div className="card-footer text-body-secondary">
         <h6>{getLastUpdatedString(repo.updated_at)}</h6>
-        {repo.homepage && (
-          <a href={repo.homepage} className="btn btn-primary">
-            <ArrowUpRightSquare />
-          </a>
-        )}
+        <button onClick={onClick} className="btn btn-primary">
+            details
+          </button>
       </div>
     </div>
   );
