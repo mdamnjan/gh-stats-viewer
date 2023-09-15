@@ -1,10 +1,11 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Github } from "react-bootstrap-icons";
 
 import HomePage from "./pages/HomePage/HomePage";
-import RepoPage from "./pages/RepoPage";
+import RepoPage from "./pages/RepoPage/RepoPage";
 import UserPage from "./pages/UserPage";
 import { BACKEND_URL } from "./utils";
+import "./App.css"
 
 function App() {
   const isLoggedIn = document.cookie.includes("isGithubAuthenticated");
@@ -23,13 +24,11 @@ function App() {
         )}
       </header>
       <div id="container">
-        <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/users/:username" element={<UserPage />} />
             <Route path="/:username/:repo" element={<RepoPage />} />
           </Routes>
-        </BrowserRouter>
       </div>
     </div>
   );
