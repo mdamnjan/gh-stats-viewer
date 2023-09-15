@@ -19,31 +19,6 @@ ChartJS.register(
   PointElement
 );
 
-export const options = {
-  indexAxis: "x",
-  elements: {
-    bar: {
-      borderWidth: 2,
-    },
-  },
-  responsive: true,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: true,
-      text: "Commits",
-    },
-  },
-  scales: {
-    x: {
-      min: 0,
-      max: 100,
-    },
-  },
-};
-
 const labels = [
   "January",
   "February",
@@ -59,16 +34,34 @@ const labels = [
   "December",
 ];
 
-const LineChart = ({ inputData }) => {
+const LineChart = ({ inputData, title }) => {
+
+  let options = {
+    indexAxis: "x",
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: title,
+      },
+    },
+  };
+
   const commitsPerMonth = Object();
   labels.forEach((label) => (commitsPerMonth[label] = 0));
 
-  inputData.map((data) => {
-    const date = new Date(data.commit.committer.date)
-    const month = date.toLocaleString(
-      "default",
-      { month: "long" }
-    );
+  inputData.forEach((data) => {
+    let date;
+    if (data.commit) {
+      date = new Date(data.commit.committer.date);
+    } else {
+      date = new Date(data.created_at);
+    }
+    const month = date.toLocaleString("default", { month: "long" });
     commitsPerMonth[month] += 1;
   });
 
@@ -83,6 +76,10 @@ const LineChart = ({ inputData }) => {
     ],
   };
 
-  return <Line options={options} data={processedData} />;
+  return (
+    <div className="card chart-container" style={{ padding: "10px" }}>
+      <Line options={options} data={processedData} />
+    </div>
+  );
 };
 export default LineChart;

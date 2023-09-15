@@ -1,0 +1,31 @@
+.repo-dashboard {
+  margin: 20px;
+  justify-self: center;
+  display: flex;
+  flex-wrap:wrap;
+  /* border: 3px solid grey; */
+  border-radius: 10px;
+  flex-direction: column;
+}
+
+#repo-page {
+    width: 100%;
+}
+
+/* #row1 {
+    height: 330px !important; 
+} 
+
+ #row2 {
+    height: 330px !important;
+}  */
+
+#row3 {
+    height: 200px !important;
+}
+
+.dashboard-row {
+    /* display: flex; */
+    /* width: 100%; */
+    /* flex-wrap: wrap; */
+}
