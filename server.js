@@ -186,9 +186,11 @@ app.get("/events", async function (req, res, next) {
   const events = await getResource(
     req,
     res,
-    `GET /users/${req.query.user}/events`,
+    `GET /users/${req.query.user}/events?per_page=${req.query.num_events}`,
     next
   );
+
+  console.log(req, res)
 
   return res.json(events);
 });

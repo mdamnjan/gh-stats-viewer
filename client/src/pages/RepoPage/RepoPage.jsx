@@ -24,12 +24,12 @@ const RepoPage = () => {
       setError,
     });
     fetchData({
-      url: `commits?user=${username}&repo=${repo}&num_commits=4`,
+      url: `commits?user=${username}&repo=${repo}&num_commits=100`,
       setData: setCommits,
       setError,
     });
     fetchData({
-      url: `events?user=${username}&repo=${repo}`,
+      url: `events?user=${username}&repo=${repo}&num_events=100`,
       setData: setEvents,
       setError,
     });
@@ -53,7 +53,7 @@ const RepoPage = () => {
             <LineChart title="Commits" inputData={commits} />
           </div>
           <div className="col-lg-4 col-sm-12">
-            <CommitList commits={commits} />
+            <CommitList commits={commits.slice(-5, -1)} />
           </div>
         </div>
         <div id="row2" className="dashboard-row row">
