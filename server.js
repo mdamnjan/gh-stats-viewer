@@ -162,9 +162,9 @@ app.get("/repos", async function (req, res, next) {
   if (req.isAuthenticated() && req.user.username == req.query.user) {
     // endpoint returns private repos as well if the Github App is authorized AND installed
     // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
-    url = `GET /user/repos`;
+    url = `GET /user/repos?sort=updated`;
   } else {
-    url = `GET /users/${req.query.user}/repos`;
+    url = `GET /users/${req.query.user}/repos?sort=updated`;
   }
   const repos = await getResource(req, res, url, next);
 
