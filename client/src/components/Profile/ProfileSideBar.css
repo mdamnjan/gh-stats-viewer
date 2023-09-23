@@ -2,15 +2,27 @@
 #user-avatar {
     border-radius: 50%;
     margin-bottom: 20px;
+    width: 250px;
+    height: 250px; 
+    min-width: 250px;
+    min-height: 250px;
+    background: white;
   }
 
 .user-profile {
     margin-left: 60px;
   }
 
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 @media (max-width: 800px) {
   .user-profile {
-    margin-left: 0;
+    margin-left: 5px;
+    margin-right: 5px;
     margin-top: 20px;
   }
 }
