@@ -30,7 +30,7 @@ const Card = ({ repo, onClick }) => {
       {currentTab === 2 && <ActivityTab repo={repo} />}
       {currentTab === 3 && <MetricsTab repo={repo} />}
       <div className="card-footer text-body-secondary">
-        <h6>{getLastUpdatedString(repo.updated_at)}</h6>
+        <h6>{getLastUpdatedString(repo.pushed_at)}</h6>
         <button onClick={onClick} className="btn btn-primary">
             details
           </button>

@@ -26,6 +26,8 @@ const UserPage = () => {
     getUserData();
   }, []);
 
+  console.log(repos)
+
   return (
     <>
       <ProfileSideBar user={userData} />
