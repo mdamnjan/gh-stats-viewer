@@ -14,6 +14,8 @@ const RepoPage = () => {
   const [repoStats, setRepoStats] = useState([]);
   const [commits, setCommits] = useState([]);
   const [events, setEvents] = useState([]);
+  const [metrics, setMetrics] = useState([]);
+  const [repoIssues, setRepoIssues] = useState([]);
   const [error, setError] = useState(undefined);
   const [rateLimit, setRateLimit] = useState({});
 
@@ -33,6 +35,16 @@ const RepoPage = () => {
       setData: setEvents,
       setError,
     });
+    fetchData({
+      url: `metrics?user=${username}&repo=${repo}`,
+      setData: setMetrics,
+      setError,
+    });
+    fetchData({
+      url: `repo-issues?user=${username}&repo=${repo}`,
+      setData: setRepoIssues,
+      setError,
+    });
     fetchData({ url: `rate_limit`, setData: setRateLimit, setError });
   };
 
@@ -40,20 +52,16 @@ const RepoPage = () => {
     getRepoData();
   }, []);
 
-  console.log(commits, repoStats, events);
-  console.log("commits", commits);
-  console.log("rate limit", rateLimit);
-
   return (
     <div id="repo-page">
       <h1>{repoStats.full_name}</h1>
       <div className="repo-dashboard container">
         <div id="row1" className="dashboard-row row">
           <div style={{ height: "100%" }} className="col-lg-8 col-sm-12">
-            <LineChart title="Commits" inputData={commits} />
+            <LineChart title="Commits" type="commit" inputData={metrics?.lastYearOfCommits || []} />
           </div>
           <div className="col-lg-4 col-sm-12">
-            <CommitList commits={commits.slice(-5, -1)} />
+            <CommitList commits={commits?.commits?.slice(-5, -1) || []} />
           </div>
         </div>
         <div id="row2" className="dashboard-row row">
@@ -66,7 +74,7 @@ const RepoPage = () => {
         </div>
         <div id="row3" className="dashboard-row row">
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Num Commits" data={commits.length} />
+            <NumberChart title="Num Open Issues" data={repoStats.open_issues_count} />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart title="Followers" data={repoStats.subscribers_count} />
@@ -75,7 +83,7 @@ const RepoPage = () => {
             <NumberChart title="Num Forks" data={repoStats.forks_count} />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Watchers" data={repoStats.watchers_count} />
+            <NumberChart title="Stars" data={repoStats.stargazers_count} />
           </div>
         </div>
       </div>
