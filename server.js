@@ -3,8 +3,10 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import passport from "passport";
 import GitHubStrategy from "passport-github2";
-import { Octokit } from "octokit";
+// import { Octokit } from "octokit";
 import cookieSession from "cookie-session";
+import { RequestError } from "@octokit/request-error";
+import { Octokit } from "@octokit/rest";
 
 dotenv.config();
 
@@ -118,14 +120,14 @@ function getOctokit(req) {
 
 async function getResource(req, res, url, next) {
   let octokit = getOctokit(req);
-
+  let results;
   try {
-    const result = await octokit.request(url);
-    return result.data;
+    results = await octokit.request(url);
   } catch (error) {
-    res.status(error.status);
-    console.log("error", error);
-    return error;
+    throw error;
+  }
+  if (results) {
+    return results.data;
   }
 }
 
@@ -158,87 +160,195 @@ app.get("/logout", function (req, res, next) {
 });
 
 app.get("/repos", async function (req, res, next) {
-  let url;
+  let repos;
+  let octokit = getOctokit(req);
+
   if (req.isAuthenticated() && req.user.username == req.query.user) {
     // endpoint returns private repos as well if the Github App is authorized AND installed
     // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
-    url = `GET /user/repos?sort=updated`;
+    try {
+      repos = await octokit.rest.repos.listForAuthenticatedUser({
+        sort: "updated",
+      });
+    } catch (error) {
+      res.status(error.status).send(error.message);
+      return;
+    }
   } else {
-    url = `GET /users/${req.query.user}/repos?sort=updated`;
+    try {
+      repos = await octokit.rest.repos.listForUser({
+        username: req.query.user,
+        sort: "updated",
+      });
+    } catch (error) {
+      res.status(error.status).send(error.message);
+      return;
+    }
   }
-  const repos = await getResource(req, res, url, next);
-
-  return res.json(repos);
+  return res.json(repos.data);
 });
 
 app.get("/profile-stats", async function (req, res, next) {
-  const profileStats = await getResource(
-    req,
-    res,
-    `GET /users/${req.query.user}`,
-    next
-  );
-
-  return res.json(profileStats);
+  let octokit = getOctokit(req);
+  let profileStats;
+  try {
+    profileStats = await octokit.rest.users.getByUsername({
+      username: req.query.user,
+    });
+  } catch (error) {
+    res.status(error.status).send(error.message);
+    return;
+  }
+  return res.json(profileStats.data);
 });
 
 app.get("/events", async function (req, res, next) {
-  const events = await getResource(
-    req,
-    res,
-    `GET /users/${req.query.user}/events?per_page=${req.query.num_events}`,
-    next
-  );
+  let octokit = getOctokit(req);
+  let events;
+  try {
+    events = await octokit.rest.activity.listRepoEvents({
+      owner: req.query.user,
+      repo: req.query.repo,
+      per_page: req.query.num_events,
+    });
+  } catch (error) {
+    res.status(error.status).send(error.message);
+    return;
+  }
+  return res.json(events.data);
+});
 
-  console.log(req, res)
+app.get("/repo-issues", async function (req, res, next) {
+  let octokit = getOctokit(req);
+  let issues;
+  try {
+    issues = await octokit.rest.issues.listForRepo({
+      owner: req.query.user,
+      repo: req.query.repo
+    });
+  } catch (error) {
+    res.status(error.status).send(error.message);
+    return;
+  }
 
-  return res.json(events);
+  console.log("issues", issues)
+  return res.json(issues.data);
 });
 
 app.get("/repo-stats", async function (req, res, next) {
-  const repoStats = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}`,
-    next
-  );
+  let octokit = getOctokit(req)
+  let repoStats;
+  try {
+    repoStats = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}`)
+  } catch(error) {
+    console.log(error)
+    res.status(error.status).send(error.message);
+    return;
+  }
 
-  const languages = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/languages`,
-    next
-  );
+  let languages;
+  try {
+    languages = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}/languages`)
+  } catch(error) {
+    res.status(error.status).send(error.message);
+    return;
+  }
 
-  return res.json({ ...repoStats, languages: languages });
+  return res.json({ ...repoStats.data, languages: languages.data });
 });
 
 app.get("/commits", async function (req, res, next) {
-  const commits = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/commits?per_page=${req.query.num_commits}`,
-    next
-  );
+  let octokit = getOctokit(req);
 
-  return res.json(commits);
+  let commits;
+  try {
+  commits = await octokit.request("GET /repos/{owner}/{repo}/commits", {owner: req.query.user, repo: req.query.repo, per_page: req.query.num_commits})
+  } catch (error) {
+    res.status(error.status).send(error.message);
+    return;
+  }
+  
+  // console.log(commits.headers['link'])
+
+  let commitCount = 0
+
+  
+  // await octokit
+  // .request("GET /repos/{owner}/{repo}/commits", {owner: req.query.user, repo: req.query.repo})
+  // .then((commits) => {
+  //   // issues is an array of all issue objects. It is not wrapped in a { data, headers, status, url } object
+  //   // like results from `octokit.request()` or any of the endpoint methods such as `octokit.rest.issues.listForRepo()`
+  //   commitCount = commits.length
+  // });
+
+  return res.json({ commits: commits.data, commitCount: commitCount });
 });
 
 app.get("/contributors", async function (req, res, next) {
   const contributors = await getResource(
     req,
     res,
-    `GET /repos/${req.query.user}/${req.query.repo}/contributors`,
+    `GET /repos/${req.query.user}/${req.query.repo}/stats/contributors`,
     next
   );
-
   return res.json(contributors);
 });
 
-app.get("/rate_limit", async function (req, res, next) {
-  const rateLimit = await getResource(req, res, "GET /rate_limit", next);
+app.get("/metrics", async function (req, res, next) {
+  const contributors = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/stats/contributors`,
+    next
+  );
 
-  return res.json(rateLimit);
+  const weeklyCommits = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/stats/code_frequency`,
+    next
+  );
+
+  const weeklyCommitCount = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/stats/participation`,
+    next
+  );
+
+  const userEvents = await getResource(
+    req,
+    res,
+    `GET /users/${req.query.user}/events`,
+    next
+  );
+
+  const lastYearOfCommits = await getResource(
+    req,
+    res,
+    `GET /repos/${req.query.user}/${req.query.repo}/stats/commit_activity`,
+    next
+  );
+  return res.json({
+    contributors: contributors,
+    weeklyCommits: weeklyCommits,
+    weeklyCommitCount: weeklyCommitCount,
+    userEvents: userEvents,
+    lastYearOfCommits: lastYearOfCommits
+  });
+});
+
+app.get("/rate_limit", async function (req, res, next) {
+  let octokit = getOctokit(req);
+  let rateLimit;
+  try {
+    rateLimit = await octokit.request("GET /rate_limit");
+  } catch (error) {
+    res.status(error.status).send(error.message);
+    return;
+  }
+
+  return res.json(rateLimit.data);
 });
 
 app.listen(port, function () {
