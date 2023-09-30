@@ -4,14 +4,14 @@ const ProfileSideBar = ({ user }) => {
   if (user) {
     return (
       <div data-bs-theme="dark" className="user-profile">
-        <img id="user-avatar" alt="User's avatar" src={user?.avatar_url}></img>
+        <img id="user-avatar" alt="User's avatar" src={user.avatar_url}></img>
         <div className="user-details">
-          <h4 className="h4"><span>{user?.login}</span></h4>
-          <h6 className="h6"><span>{user?.bio}</span></h6>
+          <h4 className="h4"><a href={user.html_url}>{user.login}</a></h4>
+          <h6 className="h6"><span>{user.bio}</span></h6>
           <h6 className="h6">
             <small class="text-muted">
               Joined{" "}
-              {new Date(user?.created_at).toLocaleDateString("en-US", {
+              {new Date(user.created_at).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "2-digit",
