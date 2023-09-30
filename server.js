@@ -57,7 +57,7 @@ app.use(
   cookieSession({
     name: "ghStatsSession",
     secret: process.env.SESSION_SECRET,
-    signed: true, 
+    signed: true,
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     ...sessionCookieOptions,
@@ -109,7 +109,7 @@ passport.use(
   )
 );
 
-app.use(methodOverride())
+app.use(methodOverride());
 
 function getOctokit(req) {
   let octokit;
@@ -175,7 +175,6 @@ app.get("/repos", async function (req, res, next) {
       });
     } catch (error) {
       return next(error, req, res, next);
-
     }
   } else {
     try {
@@ -185,7 +184,6 @@ app.get("/repos", async function (req, res, next) {
       });
     } catch (error) {
       return next(error, req, res, next);
-
     }
   }
   return res.json(repos.data);
@@ -219,40 +217,64 @@ app.get("/events", async function (req, res, next) {
   return res.json(events.data);
 });
 
+app.get("/user-events", async function (req, res, next) {
+  let octokit = getOctokit(req);
+  let events;
+  try {
+    if (req.isAuthenticated()) {
+      events = await octokit.rest.activity.listEventsForAuthenticatedUser({
+        username: req.query.user,
+        per_page: req.query.num_events,
+      });
+    } else {
+      events = await octokit.rest.activity.listPublicEventsForUser({
+        username: req.query.user,
+        per_page: req.query.num_events,
+      });
+    }
+  } catch (error) {
+    return next(error, req, res, next);
+  }
+  return res.json(events.data);
+});
+
 app.get("/repo-issues", async function (req, res, next) {
   let octokit = getOctokit(req);
   let issues;
   try {
     issues = await octokit.rest.issues.listForRepo({
       owner: req.query.user,
-      repo: req.query.repo
+      repo: req.query.repo,
     });
   } catch (error) {
     return next(error, req, res, next);
-
   }
 
   return res.json(issues.data);
 });
 
 app.get("/repo-details", async function (req, res, next) {
-  let octokit = getOctokit(req)
+  let octokit = getOctokit(req);
   let repoDetails;
   try {
-    repoDetails = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}`)
-  } catch(error) {
+    repoDetails = await octokit.request(
+      `GET /repos/${req.query.user}/${req.query.repo}`
+    );
+  } catch (error) {
     return next(error, req, res, next);
   }
-  return res.json(repoDetails.data)
-})
+  return res.json(repoDetails.data);
+});
 
 app.get("/repo-languages", async function (req, res, next) {
-  let octokit = getOctokit(req)
+  let octokit = getOctokit(req);
 
   let languages;
   try {
-    languages = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}/languages`)
-  } catch(error) {
+    languages = await octokit.request(
+      `GET /repos/${req.query.user}/${req.query.repo}/languages`
+    );
+  } catch (error) {
     return next(error, req, res, next);
   }
 
@@ -264,16 +286,19 @@ app.get("/commits", async function (req, res, next) {
 
   let commits;
   try {
-  commits = await octokit.request("GET /repos/{owner}/{repo}/commits", {owner: req.query.user, repo: req.query.repo, per_page: req.query.num_commits})
+    commits = await octokit.request("GET /repos/{owner}/{repo}/commits", {
+      owner: req.query.user,
+      repo: req.query.repo,
+      per_page: req.query.num_commits,
+    });
   } catch (error) {
     return next(error, req, res, next);
   }
-  
+
   // console.log(commits.headers['link'])
 
-  let commitCount = 0
+  let commitCount = 0;
 
-  
   // await octokit
   // .request("GET /repos/{owner}/{repo}/commits", {owner: req.query.user, repo: req.query.repo})
   // .then((commits) => {
@@ -336,7 +361,7 @@ app.get("/metrics", async function (req, res, next) {
     weeklyCommits: weeklyCommits,
     weeklyCommitCount: weeklyCommitCount,
     userEvents: userEvents,
-    lastYearOfCommits: lastYearOfCommits
+    lastYearOfCommits: lastYearOfCommits,
   });
 });
 
@@ -347,7 +372,6 @@ app.get("/rate_limit", async function (req, res, next) {
     rateLimit = await octokit.request("GET /rate_limit");
   } catch (error) {
     return next(error, req, res, next);
-
   }
 
   return res.json(rateLimit.data);
@@ -355,24 +379,25 @@ app.get("/rate_limit", async function (req, res, next) {
 
 function errorHandler(err, req, res, next) {
   if (err.status) {
-    res.status(err.status)
+    res.status(err.status);
     if (err.status == 401) {
-      console.log("hi this is a 401 error")
+      console.log("hi this is a 401 error");
     }
     if (err.status == 403) {
-      res.send("Rate limit exceeded, please sign in with GitHub to continue using the GitHub REST API.")
-      return
+      res.send(
+        "Rate limit exceeded, please sign in with GitHub to continue using the GitHub REST API."
+      );
+      return;
     }
   }
   if (err.message) {
-    res.send(err.message)
+    res.send(err.message);
   }
-  return
+  return;
 }
 
 // Note: this HAS to come after the routes or it won't work, see: https://stackoverflow.com/questions/29700005/express-4-middleware-error-handler-not-being-called
 app.use(errorHandler);
-
 
 app.listen(port, function () {
   console.log(`CORS is running on port ${port}`);

@@ -3,7 +3,7 @@ import { Github } from "react-bootstrap-icons";
 
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
-import UserPage from "./pages/UserPage";
+import UserPage from "./pages/UserPage/UserPage";
 import { BACKEND_URL } from "./utils";
 import "./App.css"
 
