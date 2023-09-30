@@ -10,23 +10,33 @@ import Card from "../components/Card/Card";
 import { fetchData } from "../utils";
 
 const UserPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [repos, setRepos] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
   let { username } = useParams();
 
   const getUserData = async () => {
-    fetchData({url: `repos?user=${username}`, setData: setRepos})
-    fetchData({url: `profile-stats?user=${username}`, setData: setUserData})
+    fetchData({
+      url: `repos?user=${username}`,
+      setData: setRepos,
+      setError: setError,
+      setIsLoading: setIsLoading,
+    });
+    fetchData({
+      url: `profile-stats?user=${username}`,
+      setData: setUserData,
+      setError: setError,
+      setIsLoading: setIsLoading,
+    });
   };
 
   useEffect(() => {
     getUserData();
   }, []);
-
-  console.log(repos)
 
   return (
     <>
@@ -39,8 +49,25 @@ const UserPage = () => {
           ]}
         />
         <div className="repo-list">
+          {error && (
+            <div>
+              {error.response?.status}
+              {error.response?.statusText}
+            </div>
+          )}
+          {isLoading && (
+            <>
+              <Card key={1} isLoading={isLoading} />
+              <Card key={2} isLoading={isLoading} />
+              <Card key={3} isLoading={isLoading} />
+              <Card key={4} isLoading={isLoading} />
+              <Card key={5} isLoading={isLoading} />
+            </>
+          )}
           {repos.map((repo) => (
             <Card
+              key={repo.id}
+              isLoading={isLoading}
               onClick={() => navigate(`/${username}/${repo.name}`)}
               repo={repo}
               // activityTab={<BarChart inputData={languages} />}

@@ -9,31 +9,30 @@ import MetricsTab from "./Tabs/MetricsTab";
 
 import { useState } from "react";
 
-const Card = ({ repo, onClick }) => {
-  const [currentTab, setCurrentTab] = useState(1);
-  const tabs = [
-    { id: 1, text: "Summary" },
-    { id: 2, text: "Activity" },
-    { id: 3, text: "Metrics" },
-  ];
+const Card = ({ key, repo, onClick, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div
+        data-bs-theme="dark"
+        key={`repo-${key}`}
+        className="card placeholder-glow"
+      >
+        <SummaryTab repo={repo} isLoading={isLoading} />
+        <div className="card-footer text-body-secondary">
+          <h6 className="placeholder col-2"><span></span></h6>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
-      <div class="card-header">
-        <CardNavBar
-          tabs={tabs}
-          handleTabSelect={setCurrentTab}
-          currentTab={currentTab}
-        />
-      </div>
-      {currentTab === 1 && <SummaryTab repo={repo} />}
-      {currentTab === 2 && <ActivityTab repo={repo} />}
-      {currentTab === 3 && <MetricsTab repo={repo} />}
+      <SummaryTab repo={repo} />
       <div className="card-footer text-body-secondary">
         <h6>{getLastUpdatedString(repo.pushed_at)}</h6>
         <button onClick={onClick} className="btn btn-primary">
-            details
-          </button>
+          details
+        </button>
       </div>
     </div>
   );
