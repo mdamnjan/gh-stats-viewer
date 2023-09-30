@@ -1,5 +1,5 @@
 import { Line } from "react-chartjs-2";
-import BaseWidget from "../../BaseWidget";
+import BaseWidget from "../BaseWidget";
 
 
 import {

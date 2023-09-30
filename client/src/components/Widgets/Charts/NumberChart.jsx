@@ -1,4 +1,4 @@
-import BaseWidget from "../../BaseWidget";
+import BaseWidget from "../BaseWidget";
 
 const NumberChart = ({ title, data }) => {
   return (

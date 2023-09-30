@@ -1,9 +1,8 @@
+import BaseWidget from "./BaseWidget";
+
 const CommitList = ({ commits }) => {
   return (
-    <div
-      data-bs-theme="dark"
-      className="card"
-    >
+    <BaseWidget>
       <div className="card-body">
         <h5 className="card-title">Recent Commits</h5>
         {commits.map(
@@ -34,7 +33,7 @@ const CommitList = ({ commits }) => {
             )
         )}
       </div>
-    </div>
+    </BaseWidget>
   );
 };
 export default CommitList;

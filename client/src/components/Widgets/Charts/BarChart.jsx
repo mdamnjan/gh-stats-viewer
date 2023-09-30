@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import BaseWidget from "../BaseWidget";
 
 ChartJS.register(
   CategoryScale,
@@ -21,7 +22,6 @@ ChartJS.register(
 );
 
 const BarChart = ({ inputData, title }) => {
-
   const options = {
     indexAxis: "y",
     elements: {
@@ -38,9 +38,9 @@ const BarChart = ({ inputData, title }) => {
       title: {
         display: true,
         text: title,
-      }
+      },
     },
-    
+
     scales: {
       x: {
         min: 0,
@@ -73,9 +73,9 @@ const BarChart = ({ inputData, title }) => {
   };
 
   return (
-    <div className="card chart-container" style={{ padding: "10px" }}>
+    <BaseWidget>
       <Bar options={options} data={chartData} />
-    </div>
+    </BaseWidget>
   );
 };
 export default BarChart;
