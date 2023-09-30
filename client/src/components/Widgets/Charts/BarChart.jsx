@@ -38,8 +38,9 @@ const BarChart = ({ inputData, title }) => {
       title: {
         display: true,
         text: title,
-      },
+      }
     },
+    
     scales: {
       x: {
         min: 0,

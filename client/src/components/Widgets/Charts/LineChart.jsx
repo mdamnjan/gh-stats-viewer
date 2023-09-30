@@ -1,4 +1,6 @@
 import { Line } from "react-chartjs-2";
+import BaseWidget from "../../BaseWidget";
+
 
 import {
   Chart as ChartJS,
@@ -20,6 +22,7 @@ ChartJS.register(
   Colors,
   PointElement
 );
+
 
 const getTimeRange = (range) => {
   let currentTime = new Date(Date());
@@ -116,14 +119,14 @@ const LineChart = ({ inputData, title, type }) => {
         output[data.type] = {};
         labels.forEach((label) => {
           output[data.type][label] = 0;
-        })
+        });
         output[data.type][date] += 1;
       } else {
         output[data.type][date] += 1;
       }
-    series = Object.keys(output);
-  })
-}
+      series = Object.keys(output);
+    });
+  }
 
   let datasets;
   if (series.length > 0) {
@@ -149,9 +152,9 @@ const LineChart = ({ inputData, title, type }) => {
   };
 
   return (
-    <div className="card chart-container" style={{ padding: "10px" }}>
+    <BaseWidget>
       <Line options={options} data={processedData} />
-    </div>
+    </BaseWidget>
   );
 };
 export default LineChart;
