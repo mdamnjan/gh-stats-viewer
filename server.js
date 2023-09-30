@@ -171,7 +171,7 @@ app.get("/repos", async function (req, res, next) {
     // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
     try {
       repos = await octokit.rest.repos.listForAuthenticatedUser({
-        sort: "updated",
+        sort: "pushed",
       });
     } catch (error) {
       return next(error, req, res, next);
@@ -181,7 +181,7 @@ app.get("/repos", async function (req, res, next) {
     try {
       repos = await octokit.rest.repos.listForUser({
         username: req.query.user,
-        sort: "updated",
+        sort: "pushed",
       });
     } catch (error) {
       return next(error, req, res, next);
