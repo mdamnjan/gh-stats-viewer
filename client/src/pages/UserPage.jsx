@@ -70,7 +70,6 @@ const UserPage = () => {
               isLoading={isLoading}
               onClick={() => navigate(`/${username}/${repo.name}`)}
               repo={repo}
-              // activityTab={<BarChart inputData={languages} />}
             ></Card>
           ))}
         </div>
