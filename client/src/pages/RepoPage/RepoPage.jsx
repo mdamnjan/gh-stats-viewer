@@ -3,15 +3,16 @@ import { useParams } from "react-router-dom";
 
 import "./RepoPage.css";
 import { fetchData } from "../../utils";
-import LineChart from "../../components/LineChart";
-import BarChart from "../../components/BarChart";
-import NumberChart from "../../components/NumberChart";
-import CommitList from "../../components/CommitList";
+import LineChart from "../../components/Widgets/Charts/LineChart";
+import BarChart from "../../components/Widgets/Charts/BarChart";
+import NumberChart from "../../components/Widgets/Charts/NumberChart";
+import CommitList from "../../components/Widgets/CommitList";
 
 const RepoPage = () => {
   let { username, repo } = useParams();
 
-  const [repoStats, setRepoStats] = useState([]);
+  const [repoDetails, setRepoDetails] = useState([]);
+  const [repoLanguages, setRepoLanguages] = useState([]);
   const [commits, setCommits] = useState([]);
   const [events, setEvents] = useState([]);
   const [metrics, setMetrics] = useState([]);
@@ -21,8 +22,13 @@ const RepoPage = () => {
 
   const getRepoData = async () => {
     fetchData({
-      url: `repo-stats?user=${username}&repo=${repo}`,
-      setData: setRepoStats,
+      url: `repo-details?user=${username}&repo=${repo}`,
+      setData: setRepoDetails,
+      setError,
+    });
+    fetchData({
+      url: `repo-languages?user=${username}&repo=${repo}`,
+      setData: setRepoLanguages,
       setError,
     });
     fetchData({
@@ -54,11 +60,22 @@ const RepoPage = () => {
 
   return (
     <div id="repo-page">
-      <h1>{repoStats.full_name}</h1>
+      <h1>{repoDetails.full_name}</h1>
+      {error && (
+        <span>
+          {error.response
+            ? `Error: ${error.response?.status} ${error.response?.data}`
+            : `Error: ${error.message}`}{" "}
+        </span>
+      )}
       <div className="repo-dashboard container">
         <div id="row1" className="dashboard-row row">
           <div style={{ height: "100%" }} className="col-lg-8 col-sm-12">
-            <LineChart title="Commits" type="commit" inputData={metrics?.lastYearOfCommits || []} />
+            <LineChart
+              title="Commits"
+              type="commit"
+              inputData={metrics?.lastYearOfCommits || []}
+            />
           </div>
           <div className="col-lg-4 col-sm-12">
             <CommitList commits={commits?.commits?.slice(-5, -1) || []} />
@@ -66,7 +83,7 @@ const RepoPage = () => {
         </div>
         <div id="row2" className="dashboard-row row">
           <div className="col-lg-6 col-sm-12">
-            <BarChart title="Languages Used" inputData={repoStats.languages} />
+            <BarChart title="Languages Used" inputData={repoLanguages} />
           </div>
           <div className="col-lg-6 col-sm-12">
             <LineChart title="Events" inputData={events} />
@@ -74,16 +91,22 @@ const RepoPage = () => {
         </div>
         <div id="row3" className="dashboard-row row">
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Num Open Issues" data={repoStats.open_issues_count} />
+            <NumberChart
+              title="Num Open Issues"
+              data={repoDetails.open_issues_count}
+            />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Followers" data={repoStats.subscribers_count} />
+            <NumberChart
+              title="Followers"
+              data={repoDetails.subscribers_count}
+            />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Num Forks" data={repoStats.forks_count} />
+            <NumberChart title="Num Forks" data={repoDetails.forks_count} />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Stars" data={repoStats.stargazers_count} />
+            <NumberChart title="Stars" data={repoDetails.stargazers_count} />
           </div>
         </div>
       </div>

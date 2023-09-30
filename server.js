@@ -7,6 +7,7 @@ import GitHubStrategy from "passport-github2";
 import cookieSession from "cookie-session";
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
+import methodOverride from "method-override";
 
 dotenv.config();
 
@@ -56,7 +57,7 @@ app.use(
   cookieSession({
     name: "ghStatsSession",
     secret: process.env.SESSION_SECRET,
-    signed: true,
+    signed: true, 
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     ...sessionCookieOptions,
@@ -108,6 +109,8 @@ passport.use(
   )
 );
 
+app.use(methodOverride())
+
 function getOctokit(req) {
   let octokit;
   if (req.isAuthenticated()) {
@@ -124,7 +127,7 @@ async function getResource(req, res, url, next) {
   try {
     results = await octokit.request(url);
   } catch (error) {
-    throw error;
+    return next(error, req, res, next);
   }
   if (results) {
     return results.data;
@@ -153,7 +156,7 @@ app.get("/logout", function (req, res, next) {
   req.logout(function (err) {
     req.session = null;
     if (err) {
-      return next(err);
+      return next(error, req, res, next);
     }
     res.redirect(FRONTEND_URL);
   });
@@ -171,8 +174,8 @@ app.get("/repos", async function (req, res, next) {
         sort: "updated",
       });
     } catch (error) {
-      res.status(error.status).send(error.message);
-      return;
+      return next(error, req, res, next);
+
     }
   } else {
     try {
@@ -181,8 +184,8 @@ app.get("/repos", async function (req, res, next) {
         sort: "updated",
       });
     } catch (error) {
-      res.status(error.status).send(error.message);
-      return;
+      return next(error, req, res, next);
+
     }
   }
   return res.json(repos.data);
@@ -196,8 +199,7 @@ app.get("/profile-stats", async function (req, res, next) {
       username: req.query.user,
     });
   } catch (error) {
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
   }
   return res.json(profileStats.data);
 });
@@ -212,8 +214,7 @@ app.get("/events", async function (req, res, next) {
       per_page: req.query.num_events,
     });
   } catch (error) {
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
   }
   return res.json(events.data);
 });
@@ -227,34 +228,35 @@ app.get("/repo-issues", async function (req, res, next) {
       repo: req.query.repo
     });
   } catch (error) {
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
+
   }
 
-  console.log("issues", issues)
   return res.json(issues.data);
 });
 
-app.get("/repo-stats", async function (req, res, next) {
+app.get("/repo-details", async function (req, res, next) {
   let octokit = getOctokit(req)
-  let repoStats;
+  let repoDetails;
   try {
-    repoStats = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}`)
+    repoDetails = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}`)
   } catch(error) {
-    console.log(error)
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
   }
+  return res.json(repoDetails.data)
+})
+
+app.get("/repo-languages", async function (req, res, next) {
+  let octokit = getOctokit(req)
 
   let languages;
   try {
     languages = await octokit.request(`GET /repos/${req.query.user}/${req.query.repo}/languages`)
   } catch(error) {
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
   }
 
-  return res.json({ ...repoStats.data, languages: languages.data });
+  return res.json(languages.data);
 });
 
 app.get("/commits", async function (req, res, next) {
@@ -264,8 +266,7 @@ app.get("/commits", async function (req, res, next) {
   try {
   commits = await octokit.request("GET /repos/{owner}/{repo}/commits", {owner: req.query.user, repo: req.query.repo, per_page: req.query.num_commits})
   } catch (error) {
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
   }
   
   // console.log(commits.headers['link'])
@@ -329,6 +330,7 @@ app.get("/metrics", async function (req, res, next) {
     `GET /repos/${req.query.user}/${req.query.repo}/stats/commit_activity`,
     next
   );
+
   return res.json({
     contributors: contributors,
     weeklyCommits: weeklyCommits,
@@ -344,12 +346,33 @@ app.get("/rate_limit", async function (req, res, next) {
   try {
     rateLimit = await octokit.request("GET /rate_limit");
   } catch (error) {
-    res.status(error.status).send(error.message);
-    return;
+    return next(error, req, res, next);
+
   }
 
   return res.json(rateLimit.data);
 });
+
+function errorHandler(err, req, res, next) {
+  if (err.status) {
+    res.status(err.status)
+    if (err.status == 401) {
+      console.log("hi this is a 401 error")
+    }
+    if (err.status == 403) {
+      res.send("Rate limit exceeded, please sign in with GitHub to continue using the GitHub REST API.")
+      return
+    }
+  }
+  if (err.message) {
+    res.send(err.message)
+  }
+  return
+}
+
+// Note: this HAS to come after the routes or it won't work, see: https://stackoverflow.com/questions/29700005/express-4-middleware-error-handler-not-being-called
+app.use(errorHandler);
+
 
 app.listen(port, function () {
   console.log(`CORS is running on port ${port}`);
