@@ -45,14 +45,14 @@ export const getLastUpdatedString = (lastUpdated) => {
   }
 };
 
-export const BACKEND_URL =
+export const SERVER_URL =
   process.env.NODE_ENV === "production"
     ? "https://gh-stats-viewer-api.up.railway.app"
     : "http://localhost:4000";
 
 export const fetchData = async ({ url, setData, setError, setIsLoading }) => {
   const results = await axios
-    .get(`${BACKEND_URL}/${url}`, {
+    .get(`${SERVER_URL}/${url}`, {
       withCredentials: true,
     })
     .catch((error) => {

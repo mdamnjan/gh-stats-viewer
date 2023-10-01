@@ -28,7 +28,7 @@ const UserPage = () => {
       setIsLoading: setIsLoading,
     });
     fetchData({
-      url: `profile-stats?user=${username}`,
+      url: `user-details?user=${username}`,
       setData: setUserData,
       setError: setError,
       setIsLoading: setIsLoading,

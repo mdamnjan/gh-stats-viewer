@@ -4,7 +4,7 @@ import { Github } from "react-bootstrap-icons";
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
 import UserPage from "./pages/UserPage/UserPage";
-import { BACKEND_URL } from "./utils";
+import { SERVER_URL } from "./utils";
 import "./App.css"
 
 function App() {
@@ -13,12 +13,12 @@ function App() {
     <div className="App" data-bs-theme="dark">
       <header className="App-header">
         {isLoggedIn && (
-          <a class="btn btn-primary" href={`${BACKEND_URL}/logout`}>
+          <a class="btn btn-primary" href={`${SERVER_URL}/logout`}>
             Log out <Github style={{ marginBottom: "3px" }} />
           </a>
         )}
         {!isLoggedIn && (
-          <a class="btn btn-primary" href={`${BACKEND_URL}/auth/github`}>
+          <a class="btn btn-primary" href={`${SERVER_URL}/auth/github`}>
             Sign in with Github <Github style={{ marginBottom: "3px" }} />
           </a>
         )}

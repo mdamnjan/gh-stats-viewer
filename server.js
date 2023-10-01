@@ -3,53 +3,45 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import passport from "passport";
 import GitHubStrategy from "passport-github2";
-// import { Octokit } from "octokit";
 import cookieSession from "cookie-session";
-import { RequestError } from "@octokit/request-error";
-import { Octokit } from "@octokit/rest";
 import methodOverride from "method-override";
 
+import { logout, onLogin } from "./api/auth.js";
+import {
+  getCodeFrequency,
+  getCommitActivity,
+  getCommits,
+  getContributors,
+  getEvents,
+  getParticipation,
+  getRepo,
+  getRepoIssues,
+  getRepoLanguages,
+} from "./api/repo.js";
+import { getRateLimit, getRepos, getUser, getUserEvents } from "./api/user.js";
+import { errorHandler } from "./api/error.js";
+import { port, CLIENT_URL, SERVER_URL } from "./api/utils.js";
+
 dotenv.config();
-
-const port = process.env.PORT || 4000;
-
-const FRONTEND_URL =
-  process.env.NODE_ENV == "production"
-    ? process.env.FRONTEND_URL
-    : "http://localhost:3000";
-const BACKEND_URL =
-  process.env.NODE_ENV == "production"
-    ? process.env.BACKEND_URL
-    : `http://localhost:${port}`;
 
 const app = express();
 app.use(cors({ credentials: true }));
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: CLIENT_URL,
   })
 );
 
 // https://www.npmjs.com/package/express-session#cookiesecure
 app.set("trust proxy", 1);
 
-let sessionCookieOptions, cookieOptions;
+let sessionCookieOptions = { sameSite: "lax" };
 if (process.env.NODE_ENV == "production") {
-  cookieOptions = {
-    secure: true,
-    domain: ".up.railway.app",
-  };
-
   sessionCookieOptions = {
     httpOnly: true,
-    sameSite: "lax",
-    ...cookieOptions,
-  };
-} else {
-  cookieOptions = {};
-
-  sessionCookieOptions = {
-    sameSite: "lax",
+    secure: true,
+    domain: process.env.DOMAIN,
+    ...sessionCookieOptions,
   };
 }
 
@@ -95,7 +87,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: `${BACKEND_URL}/auth/github/callback`,
+      callbackURL: `${SERVER_URL}/auth/github/callback`,
     },
     function (accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
@@ -111,290 +103,35 @@ passport.use(
 
 app.use(methodOverride());
 
-function getOctokit(req) {
-  let octokit;
-  if (req.isAuthenticated()) {
-    octokit = new Octokit({ auth: req.user.token });
-  } else {
-    octokit = new Octokit({});
-  }
-  return octokit;
-}
-
-async function getResource(req, res, url, next) {
-  let octokit = getOctokit(req);
-  let results;
-  try {
-    results = await octokit.request(url);
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-  if (results) {
-    return results.data;
-  }
-}
-
 app.get("/auth/github", passport.authenticate("github"));
 
 app.get(
   "/auth/github/callback",
   passport.authenticate("github", {
-    failureRedirect: `${FRONTEND_URL}/login`,
+    failureRedirect: `${CLIENT_URL}/login`,
   }),
-  function (req, res) {
-    // additional non-httpOnly cookie that can be read client-side
-    // purely for nicer UX e.g. show "Log Out" button when user is already logged in
-    res.cookie("isGithubAuthenticated", true, {...cookieOptions, maxAge: 8 * 60 * 60 * 1000,});
-    // Successful authentication, redirect home.
-    res.redirect(FRONTEND_URL);
-  }
+  onLogin
 );
 
-app.get("/logout", function (req, res, next) {
-  res.clearCookie("ghStatsSession", cookieOptions);
-  res.clearCookie("isGithubAuthenticated", cookieOptions);
-  req.logout(function (err) {
-    req.session = null;
-    if (err) {
-      return next(error, req, res, next);
-    }
-    res.redirect(FRONTEND_URL);
-  });
-});
+app.get("/logout", logout);
+app.get("/rate-limit", getRateLimit)
 
-app.get("/repos", async function (req, res, next) {
-  let repos;
-  let octokit = getOctokit(req);
+app.get("/user-details", getUser);
+app.get("/user-events", getUserEvents);
 
-  if (req.isAuthenticated() && req.user.username == req.query.user) {
-    // endpoint returns private repos as well if the Github App is authorized AND installed
-    // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
-    try {
-      repos = await octokit.rest.repos.listForAuthenticatedUser({
-        sort: "pushed",
-      });
-    } catch (error) {
-      return next(error, req, res, next);
-    }
-  } else {
-    try {
-      repos = await octokit.rest.repos.listForUser({
-        username: req.query.user,
-        sort: "pushed",
-      });
-    } catch (error) {
-      return next(error, req, res, next);
-    }
-  }
-  return res.json(repos.data);
-});
+app.get("/repos", getRepos);
 
-app.get("/profile-stats", async function (req, res, next) {
-  let octokit = getOctokit(req);
-  let profileStats;
-  try {
-    profileStats = await octokit.rest.users.getByUsername({
-      username: req.query.user,
-    });
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-  return res.json(profileStats.data);
-});
+app.get("/repo-details", getRepo);
+app.get("/repo-events", getEvents);
+app.get("/repo-issues", getRepoIssues);
+app.get("/repo-details", getRepo);
+app.get("/repo-languages", getRepoLanguages);
 
-app.get("/events", async function (req, res, next) {
-  let octokit = getOctokit(req);
-  let events;
-  try {
-    events = await octokit.rest.activity.listRepoEvents({
-      owner: req.query.user,
-      repo: req.query.repo,
-      per_page: req.query.num_events,
-    });
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-  return res.json(events.data);
-});
-
-app.get("/user-events", async function (req, res, next) {
-  let octokit = getOctokit(req);
-  let events;
-  try {
-    if (req.isAuthenticated()) {
-      events = await octokit.rest.activity.listEventsForAuthenticatedUser({
-        username: req.query.user,
-        per_page: req.query.num_events,
-      });
-    } else {
-      events = await octokit.rest.activity.listPublicEventsForUser({
-        username: req.query.user,
-        per_page: req.query.num_events,
-      });
-    }
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-  return res.json(events.data);
-});
-
-app.get("/repo-issues", async function (req, res, next) {
-  let octokit = getOctokit(req);
-  let issues;
-  try {
-    issues = await octokit.rest.issues.listForRepo({
-      owner: req.query.user,
-      repo: req.query.repo,
-    });
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-
-  return res.json(issues.data);
-});
-
-app.get("/repo-details", async function (req, res, next) {
-  let octokit = getOctokit(req);
-  let repoDetails;
-  try {
-    repoDetails = await octokit.request(
-      `GET /repos/${req.query.user}/${req.query.repo}`
-    );
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-  return res.json(repoDetails.data);
-});
-
-app.get("/repo-languages", async function (req, res, next) {
-  let octokit = getOctokit(req);
-
-  let languages;
-  try {
-    languages = await octokit.request(
-      `GET /repos/${req.query.user}/${req.query.repo}/languages`
-    );
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-
-  return res.json(languages.data);
-});
-
-app.get("/commits", async function (req, res, next) {
-  let octokit = getOctokit(req);
-
-  let commits;
-  try {
-    commits = await octokit.request("GET /repos/{owner}/{repo}/commits", {
-      owner: req.query.user,
-      repo: req.query.repo,
-      per_page: req.query.num_commits,
-    });
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-
-  // console.log(commits.headers['link'])
-
-  let commitCount = 0;
-
-  // await octokit
-  // .request("GET /repos/{owner}/{repo}/commits", {owner: req.query.user, repo: req.query.repo})
-  // .then((commits) => {
-  //   // issues is an array of all issue objects. It is not wrapped in a { data, headers, status, url } object
-  //   // like results from `octokit.request()` or any of the endpoint methods such as `octokit.rest.issues.listForRepo()`
-  //   commitCount = commits.length
-  // });
-
-  return res.json({ commits: commits.data, commitCount: commitCount });
-});
-
-app.get("/contributors", async function (req, res, next) {
-  const contributors = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/stats/contributors`,
-    next
-  );
-  return res.json(contributors);
-});
-
-app.get("/metrics", async function (req, res, next) {
-  const contributors = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/stats/contributors`,
-    next
-  );
-
-  const weeklyCommits = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/stats/code_frequency`,
-    next
-  );
-
-  const weeklyCommitCount = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/stats/participation`,
-    next
-  );
-
-  const userEvents = await getResource(
-    req,
-    res,
-    `GET /users/${req.query.user}/events`,
-    next
-  );
-
-  const lastYearOfCommits = await getResource(
-    req,
-    res,
-    `GET /repos/${req.query.user}/${req.query.repo}/stats/commit_activity`,
-    next
-  );
-
-  return res.json({
-    contributors: contributors,
-    weeklyCommits: weeklyCommits,
-    weeklyCommitCount: weeklyCommitCount,
-    userEvents: userEvents,
-    lastYearOfCommits: lastYearOfCommits,
-  });
-});
-
-app.get("/rate_limit", async function (req, res, next) {
-  let octokit = getOctokit(req);
-  let rateLimit;
-  try {
-    rateLimit = await octokit.request("GET /rate_limit");
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-
-  return res.json(rateLimit.data);
-});
-
-function errorHandler(err, req, res, next) {
-  if (err.status) {
-    res.status(err.status);
-    if (err.status == 401) {
-      console.log("hi this is a 401 error");
-    }
-    if (err.status == 403) {
-      res.send(
-        "Rate limit exceeded, please sign in with GitHub to continue using the GitHub REST API."
-      );
-      return;
-    }
-  }
-  if (err.message) {
-    res.send(err.message);
-  }
-  return;
-}
+app.get("/commits", getCommits);
+app.get("/contributors", getContributors);
+app.get("/code-frequency", getCodeFrequency);
+app.get("/commit-activity", getCommitActivity);
+app.get("/participation", getParticipation);
 
 // Note: this HAS to come after the routes or it won't work, see: https://stackoverflow.com/questions/29700005/express-4-middleware-error-handler-not-being-called
 app.use(errorHandler);

@@ -15,7 +15,8 @@ const RepoPage = () => {
   const [repoLanguages, setRepoLanguages] = useState([]);
   const [commits, setCommits] = useState([]);
   const [events, setEvents] = useState([]);
-  const [metrics, setMetrics] = useState([]);
+  const [codeFrequency, setCodeFrequency] = useState([]);
+  const [commitActivity, setCommitActivity] = useState([]);
   const [repoIssues, setRepoIssues] = useState([]);
   const [error, setError] = useState(undefined);
   const [rateLimit, setRateLimit] = useState({});
@@ -37,13 +38,18 @@ const RepoPage = () => {
       setError,
     });
     fetchData({
-      url: `events?user=${username}&repo=${repo}&num_events=100`,
+      url: `repo-events?user=${username}&repo=${repo}&num_events=100`,
       setData: setEvents,
       setError,
     });
     fetchData({
-      url: `metrics?user=${username}&repo=${repo}`,
-      setData: setMetrics,
+      url: `code-frequency?user=${username}&repo=${repo}`,
+      setData: setCodeFrequency,
+      setError,
+    });
+    fetchData({
+      url: `commit-activity?user=${username}&repo=${repo}`,
+      setData: setCommitActivity,
       setError,
     });
     fetchData({
@@ -51,7 +57,7 @@ const RepoPage = () => {
       setData: setRepoIssues,
       setError,
     });
-    fetchData({ url: `rate_limit`, setData: setRateLimit, setError });
+    fetchData({ url: `rate-limit`, setData: setRateLimit, setError });
   };
 
   useEffect(() => {
@@ -74,7 +80,7 @@ const RepoPage = () => {
             <LineChart
               title="Commits"
               type="commit"
-              data={metrics?.lastYearOfCommits || []}
+              data={commitActivity}
             />
           </div>
           <div className="col-lg-4 col-sm-12">
@@ -113,7 +119,7 @@ const RepoPage = () => {
           <div className="col">
             <LineChart
               title="Code Frequency"
-              data={metrics.weeklyCommits}
+              data={codeFrequency}
               type="frequency"
             />
           </div>
