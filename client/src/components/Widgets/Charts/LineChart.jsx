@@ -1,7 +1,6 @@
 import { Line } from "react-chartjs-2";
 import BaseWidget from "../BaseWidget";
 
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,6 +10,7 @@ import {
   Legend,
   PointElement,
   Colors,
+  Filler,
 } from "chart.js";
 
 ChartJS.register(
@@ -20,9 +20,9 @@ ChartJS.register(
   Tooltip,
   Legend,
   Colors,
+  Filler,
   PointElement
 );
-
 
 const getTimeRange = (range) => {
   let currentTime = new Date(Date());
@@ -64,7 +64,7 @@ const getTimeRange = (range) => {
   return timeRange;
 };
 
-const LineChart = ({ inputData, title, type }) => {
+const LineChart = ({ data, title, type }) => {
   let options = {
     indexAxis: "x",
     maintainAspectRatio: false,
@@ -80,10 +80,9 @@ const LineChart = ({ inputData, title, type }) => {
       colors: {
         enabled: true,
       },
-    },
-    scales: {
-      y: {
-        min: 0,
+      filler: {
+        propagate: true,
+        drawTime: "beforeDraw",
       },
     },
   };
@@ -92,40 +91,63 @@ const LineChart = ({ inputData, title, type }) => {
   let labels = [];
   let series = [];
 
-  if (!inputData || Object.keys(inputData).length === 0) {
-    inputData = [];
+  if (!data || Object.keys(data).length === 0) {
+    data = [];
   }
 
-  if (type === "commit") {
-    inputData.forEach((data) => {
-      const date = new Date(data.week * 1000).toLocaleDateString();
-      labels.push(date);
+  switch (type) {
+    case "commit":
+      data.forEach((data) => {
+        const date = new Date(data.week * 1000).toLocaleDateString();
+        labels.push(date);
 
-      output[date] = data.total;
-    });
-  } else {
-    labels = getTimeRange("lastWeek");
+        output[date] = data.total;
+      });
+      break;
 
-    let emptyTimeSeries = {};
-    labels.forEach((label) => {
-      emptyTimeSeries[label] = 0;
-    });
+    case "event":
+      labels = getTimeRange("lastWeek");
 
-    // type is event
-    inputData.forEach((data) => {
-      let date = new Date(data.created_at).toLocaleDateString();
+      let emptyTimeSeries = {};
+      labels.forEach((label) => {
+        emptyTimeSeries[label] = 0;
+      });
 
-      if (!output[data.type]) {
-        output[data.type] = {};
-        labels.forEach((label) => {
-          output[data.type][label] = 0;
-        });
-        output[data.type][date] += 1;
-      } else {
-        output[data.type][date] += 1;
-      }
-      series = Object.keys(output);
-    });
+      // type is event
+      data.forEach((data) => {
+        let date = new Date(data.created_at).toLocaleDateString();
+
+        if (!output[data.type]) {
+          output[data.type] = {};
+          labels.forEach((label) => {
+            output[data.type][label] = 0;
+          });
+          output[data.type][date] += 1;
+        } else {
+          output[data.type][date] += 1;
+        }
+        series = Object.keys(output);
+      });
+      break;
+
+    case "frequency":
+      output["additions"] = {};
+      output["deletions"] = {};
+
+      data.forEach((data) => {
+        let [week, additions, deletions] = data;
+        const date = new Date(week * 1000).toLocaleDateString();
+        labels.push(date);
+
+        output["additions"][date] = additions;
+        output["deletions"][date] = deletions;
+      });
+
+      series = ["additions", "deletions"];
+      break;
+
+    default:
+      break;
   }
 
   let datasets;
@@ -136,6 +158,7 @@ const LineChart = ({ inputData, title, type }) => {
       return {
         data: labels.map((label) => output[s][label]),
         label: s,
+        fill: "origin",
       };
     });
   } else {

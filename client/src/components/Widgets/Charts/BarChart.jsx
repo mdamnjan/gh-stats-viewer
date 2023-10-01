@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-const BarChart = ({ inputData, title }) => {
+const BarChart = ({ data, title }) => {
   const options = {
     indexAxis: "y",
     elements: {
@@ -49,14 +49,14 @@ const BarChart = ({ inputData, title }) => {
     },
   };
 
-  const labels = inputData ? Object.keys(inputData) : [];
+  const labels = data ? Object.keys(data) : [];
   const initialVal = 0;
-  const total = inputData
-    ? Object.values(inputData).reduce((cursum, val) => cursum + val, initialVal)
+  const total = data
+    ? Object.values(data).reduce((cursum, val) => cursum + val, initialVal)
     : 0;
-  const data = labels.map((label) => {
-    if (inputData && inputData[label]) {
-      return (100 * inputData[label]) / total;
+  const processedData = labels.map((label) => {
+    if (data && data[label]) {
+      return (100 * data[label]) / total;
     }
     return 0;
   });
@@ -65,7 +65,7 @@ const BarChart = ({ inputData, title }) => {
     labels,
     datasets: [
       {
-        data: data,
+        data: processedData,
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },

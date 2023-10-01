@@ -74,7 +74,7 @@ const RepoPage = () => {
             <LineChart
               title="Commits"
               type="commit"
-              inputData={metrics?.lastYearOfCommits || []}
+              data={metrics?.lastYearOfCommits || []}
             />
           </div>
           <div className="col-lg-4 col-sm-12">
@@ -83,10 +83,10 @@ const RepoPage = () => {
         </div>
         <div id="row2" className="dashboard-row row">
           <div className="col-lg-6 col-sm-12">
-            <BarChart title="Languages Used" inputData={repoLanguages} />
+            <BarChart title="Languages Used" data={repoLanguages} />
           </div>
           <div className="col-lg-6 col-sm-12">
-            <LineChart title="Events" inputData={events} />
+            <LineChart title="Events" data={events} type="event" />
           </div>
         </div>
         <div id="row3" className="dashboard-row row">
@@ -107,6 +107,15 @@ const RepoPage = () => {
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart title="Stars" data={repoDetails.stargazers_count} />
+          </div>
+        </div>
+        <div id="row3" className="dashboard-row row">
+          <div className="col">
+            <LineChart
+              title="Code Frequency"
+              data={metrics.weeklyCommits}
+              type="frequency"
+            />
           </div>
         </div>
       </div>
