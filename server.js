@@ -59,7 +59,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     signed: true,
     // Cookie Options
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 8 * 60 * 60 * 1000, // 8 hours
     ...sessionCookieOptions,
   })
 );
@@ -144,7 +144,7 @@ app.get(
   function (req, res) {
     // additional non-httpOnly cookie that can be read client-side
     // purely for nicer UX e.g. show "Log Out" button when user is already logged in
-    res.cookie("isGithubAuthenticated", true, cookieOptions);
+    res.cookie("isGithubAuthenticated", true, {...cookieOptions, maxAge: 8 * 60 * 60 * 1000,});
     // Successful authentication, redirect home.
     res.redirect(FRONTEND_URL);
   }
