@@ -81,8 +81,7 @@ const LineChart = ({ data, title, type }) => {
         enabled: true,
       },
       filler: {
-        propagate: true,
-        drawTime: "beforeDraw",
+        propagate: false,
       },
     },
   };
@@ -144,6 +143,12 @@ const LineChart = ({ data, title, type }) => {
       });
 
       series = ["additions", "deletions"];
+
+      options["plugins"]["filler"] = {
+        propagate: true,
+        drawTime: "beforeDraw",
+      };
+
       break;
 
     default:
@@ -158,7 +163,7 @@ const LineChart = ({ data, title, type }) => {
       return {
         data: labels.map((label) => output[s][label]),
         label: s,
-        fill: "origin",
+        fill: type === "frequency" ? "origin" : false,
       };
     });
   } else {
