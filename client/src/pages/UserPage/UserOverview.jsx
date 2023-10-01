@@ -23,7 +23,7 @@ const UserOverview = ({ username, userData }) => {
       <div className="row">
         <div className="col-12">
           {" "}
-          <LineChart inputData={userEvents} title="User events" />
+          <LineChart data={userEvents} title="User events" type="event" />
         </div>
         <div className="row">
           {" "}
