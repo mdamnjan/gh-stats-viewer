@@ -19,6 +19,7 @@ const RepoPage = () => {
   const [commitActivity, setCommitActivity] = useState([]);
   const [repoIssues, setRepoIssues] = useState([]);
   const [error, setError] = useState(undefined);
+  const [contributors, setContributors] = useState([])
   const [rateLimit, setRateLimit] = useState({});
 
   const getRepoData = async () => {
@@ -57,6 +58,11 @@ const RepoPage = () => {
       setData: setRepoIssues,
       setError,
     });
+    fetchData({
+      url: `contributors?user=${username}&repo=${repo}`,
+      setData: setContributors,
+      setError,
+    });
     fetchData({ url: `rate-limit`, setData: setRateLimit, setError });
   };
 
@@ -77,11 +83,7 @@ const RepoPage = () => {
       <div className="repo-dashboard container">
         <div id="row1" className="dashboard-row row">
           <div style={{ height: "100%" }} className="col-lg-8 col-sm-12">
-            <LineChart
-              title="Commits"
-              type="commit"
-              data={commitActivity}
-            />
+            <LineChart title="Commits" type="commit" data={commitActivity} />
           </div>
           <div className="col-lg-4 col-sm-12">
             <CommitList commits={commits?.commits?.slice(-5, -1) || []} />
@@ -116,11 +118,18 @@ const RepoPage = () => {
           </div>
         </div>
         <div id="row3" className="dashboard-row row">
-          <div className="col">
+          <div className="col-6">
             <LineChart
               title="Code Frequency"
               data={codeFrequency}
               type="frequency"
+            />
+          </div>
+          <div className="col-6">
+            <BarChart
+              title="Contributors"
+              data={contributors}
+              type="contributors"
             />
           </div>
         </div>
