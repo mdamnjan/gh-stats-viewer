@@ -19,15 +19,15 @@ const SummaryTab = ({ repo, isLoading }) => {
       <h6 className="card-subtitle mb-2 text-body-secondary">
         <span className="badge rounded-pill text-bg-secondary">
           <Star />
-          {repo.stargazers_count}
+          {repo.stargazers_count.toLocaleString()}
         </span>
         <span className="badge rounded-pill text-bg-secondary">
           <Eye />
-          {repo.watchers_count}
+          {repo.watchers_count.toLocaleString()}
         </span>
         <span className="badge rounded-pill text-bg-secondary">
           <Bezier2 />
-          {repo.forks_count}
+          {repo.forks_count.toLocaleString()}
         </span>
       </h6>
       <p className="card-text">{repo.description}</p>

@@ -8,6 +8,7 @@ import "./HomePage.css";
 const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [pageNum, setPageNum] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(null);
 
   const navigate = useNavigate();
 
@@ -17,13 +18,28 @@ const HomePage = () => {
     );
   };
 
+  const showMore = (e) => {
+    e.preventDefault();
+    // only perform the search if the user types something in
+    if (searchTerm) {
+      searchUsers(searchTerm, pageNum + 1).then((res) => {
+        setPageNum(pageNum + 1);
+
+        setSearchResults({
+          ...searchResults,
+          items: [...searchResults.items, ...res.data.items],
+        });
+      });
+    }
+  };
+
   const search = (e) => {
     e.preventDefault();
-
     // only perform the search if the user types something in
-    if (e.target.searchField.value) {
-      searchUsers(e.target.searchField.value, 1).then((res) => {
-        console.log(res.data);
+    if (searchTerm) {
+      searchUsers(searchTerm, pageNum + 1).then((res) => {
+        setPageNum(pageNum + 1);
+
         setSearchResults(res.data);
       });
     }
@@ -46,6 +62,10 @@ const HomePage = () => {
               placeholder="Search for a user"
               aria-label="Searchbar"
               aria-describedby="basic-addon2"
+              onChange={(e) => {
+                setPageNum(0);
+                setSearchTerm(e.target.value);
+              }}
             />
             <button type="submit" class="btn btn-primary" id="basic-addon2">
               <Search />
@@ -53,6 +73,11 @@ const HomePage = () => {
           </div>
           {searchResults.total_count === 0 && (
             <p class="fw-lighter">No search results found</p>
+          )}
+          {searchResults.total_count > 0 && (
+            <p class="fw-lighter">
+              {searchResults.total_count.toLocaleString()} results found
+            </p>
           )}
         </form>
       </div>
@@ -71,11 +96,21 @@ const HomePage = () => {
                 src={user.avatar_url}
               ></img>
               <h1 style={{ display: "inline-block" }}> {user.login}</h1>
+              <p>{user.bio}</p>
             </div>
           ))}
-        {searchResults.length !== 0 && (
-          <button class="btn btn-secondary" onClick={()=>setPageNum(pageNum+1)}>Show More</button>
-        )}
+        {searchResults.items &&
+          searchResults.total_count > searchResults.items?.length && (
+            <button
+              class="btn btn-secondary"
+              onClick={(e) => {
+                setPageNum(pageNum + 1);
+                showMore(e);
+              }}
+            >
+              Show More
+            </button>
+          )}
       </div>
     </div>
   );

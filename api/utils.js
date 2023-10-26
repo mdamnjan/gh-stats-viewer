@@ -5,7 +5,7 @@ export const port = process.env.PORT || 4000;
 export const CLIENT_URL =
   process.env.NODE_ENV == "production"
     ? process.env.CLIENT_URL
-    : "http://localhost:3000";
+    : "http://localhost:3001";
 
 export const SERVER_URL =
   process.env.NODE_ENV == "production"
