@@ -43,6 +43,24 @@ function App() {
       </header>
       <div id="container">
         <Routes>
+          <Route
+            path="*"
+            element={
+              <div
+                style={{
+                  width: "100%",
+                  marginTop: "100px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <h3>Sorry, this page doesn't exist.</h3>
+                <a href="/">Return to homepage</a>
+              </div>
+            }
+          />
           <Route path="/" element={<HomePage />} />
           <Route path="/users/:username" element={<UserPage />} />
           <Route path="/:username/:repo" element={<RepoPage />} />
