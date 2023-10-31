@@ -118,14 +118,14 @@ const RepoPage = () => {
           </div>
         </div>
         <div id="row3" className="dashboard-row row">
-          <div className="col-6">
+          <div className="col-md-6 col-sm-12">
             <LineChart
               title="Code Frequency"
               data={codeFrequency}
               type="frequency"
             />
           </div>
-          <div className="col-6">
+          <div className="col-md-6 col-sm-12">
             <BarChart
               title="Contributors"
               data={contributors}

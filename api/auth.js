@@ -1,14 +1,14 @@
 import { CLIENT_URL } from "./utils.js";
 
 export function logout(req, res, next) {
-  res.clearCookie("ghStatsSession");
-  res.clearCookie("isGithubAuthenticated");
   req.logout(function (err) {
     req.session = null;
     if (err) {
       return next(error, req, res, next);
     }
-    res.redirect(CLIENT_URL);
+    res.clearCookie("ghStatsSession");
+    res.clearCookie("isGithubAuthenticated");
+    res.end()
   });
 }
 

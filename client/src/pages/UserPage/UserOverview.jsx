@@ -27,13 +27,13 @@ const UserOverview = ({ username, userData }) => {
         </div>
         <div className="row">
           {" "}
-          <div className="col-4">
+          <div className="col-md-4 col-xs-12">
             <NumberChart title="Followers" data={userData.followers} />
           </div>
-          <div className="col-4">
+          <div className="col-md-4 col-xs-12">
             <NumberChart title="Following" data={userData.following} />
           </div>
-          <div className="col-4">
+          <div className="col-md-4 col-xs-12">
             <NumberChart title="Public Repos" data={userData.public_repos} />
           </div>
         </div>

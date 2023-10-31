@@ -3,7 +3,7 @@ export function errorHandler(err, req, res, next) {
   if (err.status) {
     res.status(err.status);
     if (err.status == 401) {
-      console.log("hi this is a 401 error");
+      return
     }
     if (err.status == 403) {
       res.send(

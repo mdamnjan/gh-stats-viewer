@@ -1,10 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import {
-  Github,
-  HouseHeart,
-} from "react-bootstrap-icons";
+import { Github, HouseHeart } from "react-bootstrap-icons";
+import axios from "axios";
 
-import { useContext, createContext } from "react";
+import { useState } from "react";
 
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
@@ -14,6 +12,15 @@ import "./App.css";
 
 function App() {
   const isLoggedIn = document.cookie.includes("isGithubAuthenticated");
+
+  const handleLogin = () => {
+    window.location = `${SERVER_URL}/auth/github`;
+  };
+
+  const handleLogout = () => {
+    axios.get(`${SERVER_URL}/logout`, { withCredentials: true });
+    window.location = "/";
+  };
   return (
     <div className="App" data-bs-theme="dark">
       <header className="App-header">
@@ -25,14 +32,14 @@ function App() {
           <HouseHeart width={24} height={24} />
         </a>
         {isLoggedIn && (
-          <a class="btn btn-primary" href={`${SERVER_URL}/logout`}>
+          <button class="btn btn-primary" onClick={handleLogout}>
             Log out <Github style={{ marginBottom: "3px" }} />
-          </a>
+          </button>
         )}
         {!isLoggedIn && (
-          <a class="btn btn-primary" href={`${SERVER_URL}/auth/github`}>
+          <button class="btn btn-primary" onClick={handleLogin}>
             Sign in with Github <Github style={{ marginBottom: "3px" }} />
-          </a>
+          </button>
         )}
       </header>
       <div id="container">
