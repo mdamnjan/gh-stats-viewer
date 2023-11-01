@@ -62,6 +62,14 @@ export class UserClient {
   async getUserEvents() {
     return fetchData(`user-events?user=${this.username}&num_events=100`);
   }
+
+  async getUserRepos() {
+    return fetchData(`repos?user=${this.username}`)
+  }
+
+  async getUserDetails() {
+    return fetchData(`user-details?user=${this.username}`)
+  }
 }
 
 export const fetchData = async (url) => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BarChartLine, JournalCode } from "react-bootstrap-icons";
 
 import { useParams } from "react-router-dom";
+import { useQueries } from "react-query";
 
 import "../../App.css";
 import Tabs from "../../components/Tabs/Tabs";
@@ -10,38 +11,31 @@ import { fetchData } from "../../utils";
 import RepoList from "./RepoList";
 import UserOverview from "./UserOverview";
 
+import { UserClient } from "../../api";
 
 const UserPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [repos, setRepos] = useState([]);
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
   const [isRepoView, setIsRepoView] = useState(true);
 
   let { username } = useParams();
 
-  const getUserData = async () => {
-    fetchData({
-      url: `repos?user=${username}`,
-      setData: setRepos,
-      setError: setError,
-      setIsLoading: setIsLoading,
-    });
-    fetchData({
-      url: `user-details?user=${username}`,
-      setData: setUserData,
-      setError: setError,
-      setIsLoading: setIsLoading,
-    });
-  };
-
-  useEffect(() => {
-    getUserData();
-  }, []);
+  const userClient = new UserClient(username);
+  
+  const [userData, repos] = useQueries([
+    {
+      queryKey: ["userData"],
+      queryFn: () => userClient.getUserDetails(),
+      initialData: [],
+    },
+    {
+      queryKey: ["userRepos"],
+      queryFn: () => userClient.getUserRepos(),
+      initialData: [],
+    },
+  ]);
 
   return (
     <>
-      <ProfileSideBar user={userData} />
+      <ProfileSideBar user={userData.data} />
       <div className="contents">
         <Tabs
           onClick={(e) => setIsRepoView(!isRepoView)}
@@ -54,8 +48,16 @@ const UserPage = () => {
             },
           ]}
         />
-        {!isRepoView && <UserOverview username={username} userData={userData}/>}
-        {isRepoView && <RepoList repos={repos} isLoading={isLoading} error={error} />}
+        {!isRepoView && (
+          <UserOverview username={username} userData={userData.data} />
+        )}
+        {isRepoView && (
+          <RepoList
+            repos={repos.data}
+            isLoading={repos.isLoading}
+            error={repos.error}
+          />
+        )}
       </div>
     </>
   );
