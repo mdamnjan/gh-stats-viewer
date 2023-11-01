@@ -11,8 +11,53 @@ export const search = async ({ resource, searchTerm, page, perPage }) => {
   );
 };
 
-export const fetchData = async ({ url }) => {
-  return axios.get(`${SERVER_URL}/${url}`, {
-    withCredentials: true,
-  });
+export class RepoClient {
+  constructor(username, repo) {
+    this.username = username;
+    this.repo = repo;
+  }
+
+  async getDetails() {
+    return fetchData(`repo-details?user=${this.username}&repo=${this.repo}`);
+  }
+
+  async getCommits() {
+    return fetchData(
+      `commits?user=${this.username}&repo=${this.repo}&num_commits=100`
+    );
+  }
+
+  async getRepoLanguages() {
+    return fetchData(`repo-languages?user=${this.username}&repo=${this.repo}`);
+  }
+
+  async getEvents() {
+    return fetchData(
+      `repo-events?user=${this.username}&repo=${this.repo}&num_events=100`
+    );
+  }
+
+  async getCodeFrequency() {
+    return fetchData(`code-frequency?user=${this.username}&repo=${this.repo}`);
+  }
+
+  async getCommitActivity() {
+    return fetchData(`commit-activity?user=${this.username}&repo=${this.repo}`);
+  }
+
+  async getRepoIssues() {
+    return fetchData(`repo-issues?user=${this.username}&repo=${this.repo}`);
+  }
+
+  async getContributors() {
+    return fetchData(`contributors?user=${this.username}&repo=${this.repo}`);
+  }
+}
+
+export const fetchData = async (url) => {
+  return axios
+    .get(`${SERVER_URL}/${url}`, {
+      withCredentials: true,
+    })
+    .then((res) => res.data);
 };

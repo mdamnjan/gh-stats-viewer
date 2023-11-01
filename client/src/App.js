@@ -16,7 +16,7 @@ import "./App.css";
 import { fetchData } from "./api";
 
 const RateLimits = ({ rateLimit }) => {
-  const limits = rateLimit.data.resources;
+  const limits = rateLimit.resources;
   return (
     <div>
       <div className="badge text" style={{ display: "block" }}>
@@ -34,8 +34,7 @@ const RateLimits = ({ rateLimit }) => {
       </div>
       <div className="badge text-bg-secondary">
         <span className="h6">
-          {"GraphQL"}:{" "}
-          {`${limits.graphql.remaining}/${limits.graphql.limit}`}
+          {"GraphQL"}: {`${limits.graphql.remaining}/${limits.graphql.limit}`}
         </span>
       </div>
     </div>
@@ -46,14 +45,12 @@ function App() {
   const isLoggedIn = Cookies.get('isGithubAuthenticated');
   const { data: rateLimit } = useQuery({
     queryKey: ["rateLimit"],
-    queryFn: () => fetchData({ url: "rate-limit" }),
+    queryFn: () => fetchData("rate-limit"),
     initialData: {
-      data: {
-        resources: {
-          search: { limit: 0, remaining: 0 },
-          core: { limit: 0, remaining: 0 },
-          graphql: { limit: 0, remaining: 0 },
-        },
+      resources: {
+        search: { limit: 0, remaining: 0 },
+        core: { limit: 0, remaining: 0 },
+        graphql: { limit: 0, remaining: 0 },
       },
     },
   });

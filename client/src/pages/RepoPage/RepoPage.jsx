@@ -2,77 +2,69 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import "./RepoPage.css";
-import { fetchData } from "../../utils";
 import LineChart from "../../components/Widgets/Charts/LineChart";
 import BarChart from "../../components/Widgets/Charts/BarChart";
 import NumberChart from "../../components/Widgets/Charts/NumberChart";
 import CommitList from "../../components/Widgets/CommitList";
+import { RepoClient } from "../../api";
+import { useQueries, useQuery } from "react-query";
 
 const RepoPage = () => {
   let { username, repo } = useParams();
 
-  const [repoDetails, setRepoDetails] = useState([]);
-  const [repoLanguages, setRepoLanguages] = useState([]);
-  const [commits, setCommits] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [codeFrequency, setCodeFrequency] = useState([]);
-  const [commitActivity, setCommitActivity] = useState([]);
-  const [repoIssues, setRepoIssues] = useState([]);
   const [error, setError] = useState(undefined);
-  const [contributors, setContributors] = useState([])
-  const [rateLimit, setRateLimit] = useState({});
 
-  const getRepoData = async () => {
-    fetchData({
-      url: `repo-details?user=${username}&repo=${repo}`,
-      setData: setRepoDetails,
-      setError,
-    });
-    fetchData({
-      url: `repo-languages?user=${username}&repo=${repo}`,
-      setData: setRepoLanguages,
-      setError,
-    });
-    fetchData({
-      url: `commits?user=${username}&repo=${repo}&num_commits=100`,
-      setData: setCommits,
-      setError,
-    });
-    fetchData({
-      url: `repo-events?user=${username}&repo=${repo}&num_events=100`,
-      setData: setEvents,
-      setError,
-    });
-    fetchData({
-      url: `code-frequency?user=${username}&repo=${repo}`,
-      setData: setCodeFrequency,
-      setError,
-    });
-    fetchData({
-      url: `commit-activity?user=${username}&repo=${repo}`,
-      setData: setCommitActivity,
-      setError,
-    });
-    fetchData({
-      url: `repo-issues?user=${username}&repo=${repo}`,
-      setData: setRepoIssues,
-      setError,
-    });
-    fetchData({
-      url: `contributors?user=${username}&repo=${repo}`,
-      setData: setContributors,
-      setError,
-    });
-    fetchData({ url: `rate-limit`, setData: setRateLimit, setError });
-  };
+  const repoClient = new RepoClient(username, repo);
 
-  useEffect(() => {
-    getRepoData();
-  }, []);
+  const [
+    repoDetails,
+    commits,
+    repoLanguages,
+    events,
+    codeFrequency,
+    commitActivity,
+    contributors,
+  ] = useQueries([
+    {
+      queryKey: ["repoDetails"],
+      queryFn: () => repoClient.getDetails(),
+      initialData: [],
+    },
+    {
+      queryKey: ["commits"],
+      queryFn: () => repoClient.getCommits(),
+      initialData: [],
+    },
+    {
+      queryKey: ["repoLanguages"],
+      queryFn: () => repoClient.getRepoLanguages(),
+      initialData: [],
+    },
+    {
+      queryKey: ["repoEvents"],
+      queryFn: () => repoClient.getEvents(),
+      initialData: [],
+    },
+    {
+      queryKey: ["codeFrequency"],
+      queryFn: () => repoClient.getCodeFrequency(),
+      initialData: [],
+    },
+    {
+      queryKey: ["commitActivity"],
+      queryFn: () => repoClient.getCommitActivity(),
+      initialData: [],
+    },
+    {
+      queryKey: ["contributors"],
+      queryFn: () => repoClient.getContributors(),
+      initialData: [],
+    },
+  ]);
 
   return (
     <div id="repo-page">
-      <h1>{repoDetails.full_name}</h1>
+      <h1>{repoDetails?.data?.full_name}</h1>
       {error && (
         <span>
           {error.response
@@ -82,53 +74,70 @@ const RepoPage = () => {
       )}
       <div className="repo-dashboard container">
         <div id="row1" className="dashboard-row row">
-          <div style={{ height: "100%" }} className="col-lg-8 col-sm-12">
-            <LineChart title="Commits" type="commit" data={commitActivity} />
-          </div>
-          <div className="col-lg-4 col-sm-12">
-            <CommitList commits={commits?.commits?.slice(-5, -1) || []} />
-          </div>
-        </div>
-        <div id="row2" className="dashboard-row row">
-          <div className="col-lg-6 col-sm-12">
-            <BarChart title="Languages Used" data={repoLanguages} />
-          </div>
-          <div className="col-lg-6 col-sm-12">
-            <LineChart title="Events" data={events} type="event" />
-          </div>
-        </div>
-        <div id="row3" className="dashboard-row row">
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart
               title="Num Open Issues"
-              data={repoDetails.open_issues_count}
+              data={repoDetails?.data.open_issues_count}
             />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart
               title="Followers"
-              data={repoDetails.subscribers_count}
+              data={repoDetails?.data.subscribers_count}
             />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Num Forks" data={repoDetails.forks_count} />
+            <NumberChart
+              title="Num Forks"
+              data={repoDetails?.data.forks_count}
+            />
           </div>
           <div className="col-md-3 col-sm-6 col-xs-6">
-            <NumberChart title="Stars" data={repoDetails.stargazers_count} />
+            <NumberChart
+              title="Stars"
+              data={repoDetails?.data.stargazers_count}
+            />
+          </div>
+        </div>
+        <div
+          id="row2"
+          className="dashboard-row row"
+          style={{ display: "flex !important" }}
+        >
+          <div
+            style={{ height: "100% !important", flexGrow: 1 }}
+            className="col-lg-8 col-sm-12"
+          >
+            <LineChart
+              title="Commits"
+              type="commit"
+              data={commitActivity.data}
+            />
+          </div>
+          <div className="col-lg-4 col-sm-12">
+            <CommitList commits={commits?.data?.commits?.slice(-5, -1) || []} />
+          </div>
+        </div>
+        <div id="row2" className="dashboard-row row">
+          <div className="col-lg-6 col-sm-12">
+            <BarChart title="Languages Used" data={repoLanguages?.data} />
+          </div>
+          <div className="col-lg-6 col-sm-12">
+            <LineChart title="Events" data={events.data} type="event" />
           </div>
         </div>
         <div id="row3" className="dashboard-row row">
           <div className="col-md-6 col-sm-12">
             <LineChart
               title="Code Frequency"
-              data={codeFrequency}
+              data={codeFrequency.data}
               type="frequency"
             />
           </div>
           <div className="col-md-6 col-sm-12">
             <BarChart
               title="Contributors"
-              data={contributors}
+              data={contributors?.data}
               type="contributors"
             />
           </div>
