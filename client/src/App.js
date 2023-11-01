@@ -1,8 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Github, HouseHeart } from "react-bootstrap-icons";
 import axios from "axios";
-
-import { useState } from "react";
+import Cookies from 'js-cookie';
 
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
@@ -11,7 +10,7 @@ import { SERVER_URL } from "./utils";
 import "./App.css";
 
 function App() {
-  const isLoggedIn = document.cookie.includes("isGithubAuthenticated");
+  const isLoggedIn = Cookies.get('isGithubAuthenticated');
 
   const handleLogin = () => {
     window.location = `${SERVER_URL}/auth/github`;
