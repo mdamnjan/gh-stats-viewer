@@ -10,16 +10,23 @@ const SearchResults = ({ type, hasNextPage, pages, error, showMore }) => {
   if (error) {
     return <div class="search-results">{error && <p>{error.message}</p>}</div>;
   }
+  console.log("in search restults", pages);
+  if (!pages[0]) {
+    return;
+  }
 
-  const firstPage = pages[0].data;
+  if (!pages[0].data) {
+    return;
+  }
 
-  if (firstPage.total_count === 0) {
+  if (pages[0] && pages[0].data && pages[0].data.total_count === 0) {
     return (
       <div class="search-results">
         <p class="fw-lighter">No search results found</p>
       </div>
     );
   }
+  const firstPage = pages[0].data;
 
   return (
     <div class="search-results">

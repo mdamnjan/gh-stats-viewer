@@ -1,7 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import { Github, HouseHeart } from "react-bootstrap-icons";
 import axios from "axios";
+<<<<<<< HEAD
 import Cookies from 'js-cookie';
+=======
+import { useQuery } from "react-query";
+>>>>>>> 703c5a8 (Display rate limit + remaining calls on pages)
 
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
@@ -9,9 +13,51 @@ import UserPage from "./pages/UserPage/UserPage";
 import { SERVER_URL } from "./utils";
 import "./App.css";
 
+import { fetchData } from "./api";
+
+const RateLimits = ({ rateLimit }) => {
+  const limits = rateLimit.data.resources;
+  return (
+    <div>
+      <div className="badge text" style={{ display: "block" }}>
+        <span className="h5">{`Rate limits`}</span>
+      </div>
+      <div className="badge text-bg-secondary">
+        <span className="h6">
+          {"Search"}: {`${limits.search.remaining}/${limits.search.limit}`}
+        </span>
+      </div>
+      <div className="badge text-bg-secondary">
+        <span className="h6">
+          {"REST"}: {`${limits.core.remaining}/${limits.core.limit}`}
+        </span>
+      </div>
+      <div className="badge text-bg-secondary">
+        <span className="h6">
+          {"GraphQL"}:{" "}
+          {`${limits.graphql.remaining}/${limits.graphql.limit}`}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const isLoggedIn = Cookies.get('isGithubAuthenticated');
-
+  const { data: rateLimit } = useQuery({
+    queryKey: ["rateLimit"],
+    queryFn: () => fetchData({ url: "rate-limit" }),
+    initialData: {
+      data: {
+        resources: {
+          search: { limit: 0, remaining: 0 },
+          core: { limit: 0, remaining: 0 },
+          graphql: { limit: 0, remaining: 0 },
+        },
+      },
+    },
+  });
+  
   const handleLogin = () => {
     window.location = `${SERVER_URL}/auth/github`;
   };
@@ -30,6 +76,14 @@ function App() {
         >
           <HouseHeart width={24} height={24} />
         </a>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            position: "absolute",
+            left: "100px",
+          }}
+        ></div>
         {isLoggedIn && (
           <button class="btn btn-primary" onClick={handleLogout}>
             Log out <Github style={{ marginBottom: "3px" }} />
@@ -41,6 +95,7 @@ function App() {
           </button>
         )}
       </header>
+      <RateLimits rateLimit={rateLimit} />
       <div id="container">
         <Routes>
           <Route

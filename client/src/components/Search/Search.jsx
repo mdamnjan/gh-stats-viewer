@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useQueryClient } from "react-query";
 
 import SearchBar from "./SearchBar";
 import { search } from "../../api";
 import SearchResults from "./SearchResults";
 
-const Search = ({ resource, resultsPerPage=10 }) => {
+const Search = ({ resource, resultsPerPage = 10 }) => {
   const [searchTerm, setSearchTerm] = useState(null);
+
+  const queryClient = useQueryClient();
 
   const {
     data: searchResults,
@@ -21,10 +23,11 @@ const Search = ({ resource, resultsPerPage=10 }) => {
         resource: resource,
         searchTerm: searchTerm,
         page: pageParam,
-        perPage: resultsPerPage
+        perPage: resultsPerPage,
       }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rateLimit"] }),
     getNextPageParam: (lastPage) => {
-      if (lastPage.data.items.length < resultsPerPage) {
+      if (lastPage?.data?.items.length < resultsPerPage) {
         return undefined;
       }
       return lastPage + 1;
