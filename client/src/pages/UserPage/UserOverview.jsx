@@ -1,29 +1,26 @@
 import NumberChart from "../../components/Widgets/Charts/NumberChart";
 import LineChart from "../../components/Widgets/Charts/LineChart";
-import { useEffect, useState } from "react";
-import { fetchData } from "../../utils";
+
+import { useQueries } from "react-query";
+import { UserClient } from "../../api";
 
 const UserOverview = ({ username, userData }) => {
-  const [userEvents, setUserEvents] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  console.log("user data", userData);
+  const userClient = new UserClient(username);
 
-  useEffect(() => {
-    fetchData({
-      url: `user-events?user=${username}&num_events=100`,
-      setData: setUserEvents,
-      setError: setError,
-      setIsLoading: setIsLoading,
-    });
-  }, []);
+  const [userEvents] = useQueries([
+    {
+      queryKey: ["userEvents"],
+      queryFn: () => userClient.getUserEvents(),
+      initialData: [],
+    },
+  ]);
 
   return (
     <div>
       <div className="row">
         <div className="col-12">
           {" "}
-          <LineChart data={userEvents} title="User events" type="event" />
+          <LineChart data={userEvents.data} title="User events" type="event" />
         </div>
         <div className="row">
           {" "}

@@ -54,6 +54,16 @@ export class RepoClient {
   }
 }
 
+export class UserClient {
+  constructor(username) {
+    this.username = username;
+  }
+
+  async getUserEvents() {
+    return fetchData(`user-events?user=${this.username}&num_events=100`);
+  }
+}
+
 export const fetchData = async (url) => {
   return axios
     .get(`${SERVER_URL}/${url}`, {
