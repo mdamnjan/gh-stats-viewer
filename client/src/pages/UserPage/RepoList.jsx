@@ -37,7 +37,7 @@ const RepoList = ({ repos, error, isLoading }) => {
         <Card
           key={repo.id}
           isLoading={isLoading}
-          onClick={() => navigate(`/${username}/${repo.name}`)}
+          onClick={() => navigate(`/repos/${username}/${repo.name}`)}
           repo={repo}
         ></Card>
       ))}

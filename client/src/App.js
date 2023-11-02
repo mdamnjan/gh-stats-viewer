@@ -1,11 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import { Github, HouseHeart } from "react-bootstrap-icons";
 import axios from "axios";
-<<<<<<< HEAD
 import Cookies from 'js-cookie';
-=======
 import { useQuery } from "react-query";
->>>>>>> 703c5a8 (Display rate limit + remaining calls on pages)
 
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
@@ -115,7 +112,7 @@ function App() {
           />
           <Route path="/" element={<HomePage />} />
           <Route path="/users/:username" element={<UserPage />} />
-          <Route path="/:username/:repo" element={<RepoPage />} />
+          <Route path="/repos/:username/:repo" element={<RepoPage />} />
         </Routes>
       </div>
     </div>
