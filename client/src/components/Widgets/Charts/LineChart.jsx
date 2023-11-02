@@ -64,7 +64,7 @@ const getTimeRange = (range) => {
   return timeRange;
 };
 
-const LineChart = ({ data, title, type }) => {
+const LineChart = ({ data, isLoading, error, title, type }) => {
   let options = {
     indexAxis: "x",
     maintainAspectRatio: false,
@@ -180,7 +180,7 @@ const LineChart = ({ data, title, type }) => {
   };
 
   return (
-    <BaseWidget>
+    <BaseWidget isLoading={isLoading} error={error}>
       <Line options={options} data={processedData} />
     </BaseWidget>
   );

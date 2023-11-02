@@ -1,8 +1,8 @@
 import BaseWidget from "../BaseWidget";
 
-const NumberChart = ({ title, data }) => {
+const NumberChart = ({ data, isLoading, error, title }) => {
   return (
-    <BaseWidget>
+    <BaseWidget isLoading={isLoading} error={error}>
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <h1>{data? data.toLocaleString(): data}</h1>

@@ -1,12 +1,12 @@
-import NumberChart from "./Charts/NumberChart";
-import LineChart from "./Charts/LineChart";
-import BarChart from "./Charts/BarChart";
 import { ExclamationTriangle } from "react-bootstrap-icons";
 
-const BaseWidget = ({ children, error }) => {
-  if (error) {
+const BaseWidget = ({ children, error, isLoading }) => {
+  if (isLoading) {
     return (
-      <div className="card chart-container" style={{ padding: "10px" }}>
+      <div
+        className="card chart-container"
+        style={{ padding: "10px", minHeight: "200px" }}
+      >
         <span style={{ verticalAlign: "middle" }}>
           <ExclamationTriangle style={{ marginRight: "5px" }} />
           {"No results found."}
@@ -16,17 +16,27 @@ const BaseWidget = ({ children, error }) => {
   }
   if (error) {
     return (
-      <div className="card chart-container" style={{ padding: "10px" }}>
-        <span style={{ verticalAlign: "middle" }}>
-          <ExclamationTriangle style={{ marginRight: "5px" }} />
-          {error.status}
-          {error.message}
-        </span>
+      <div
+        className="card chart-container"
+        style={{
+          padding: "10px",
+          minHeight: "200px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <ExclamationTriangle style={{ marginRight: "5px" }} />
+        <span style={{width: "80%"}}>{error.response.data}</span>
       </div>
     );
   }
   return (
-    <div className="card chart-container" style={{ padding: "10px" }}>
+    <div
+      className="card chart-container"
+      style={{ padding: "10px", minHeight: "200px" }}
+    >
       {children}
     </div>
   );

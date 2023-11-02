@@ -25,17 +25,19 @@ const UserPage = () => {
       queryKey: ["userData"],
       queryFn: () => userClient.getUserDetails(),
       initialData: [],
+      retry: false
     },
     {
       queryKey: ["userRepos"],
       queryFn: () => userClient.getUserRepos(),
       initialData: [],
+      retry: false
     },
   ]);
 
   return (
     <>
-      <ProfileSideBar user={userData.data} />
+      <ProfileSideBar user={userData.data} isLoading={userData.isLoading} error={userData.error} />
       <div className="contents">
         <Tabs
           onClick={(e) => setIsRepoView(!isRepoView)}
@@ -49,7 +51,7 @@ const UserPage = () => {
           ]}
         />
         {!isRepoView && (
-          <UserOverview username={username} userData={userData.data} />
+          <UserOverview username={username} userData={userData} />
         )}
         {isRepoView && (
           <RepoList

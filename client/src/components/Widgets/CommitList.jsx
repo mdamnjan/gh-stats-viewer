@@ -1,8 +1,8 @@
 import BaseWidget from "./BaseWidget";
 
-const CommitList = ({ commits }) => {
+const CommitList = ({ commits, isLoading, error }) => {
   return (
-    <BaseWidget>
+    <BaseWidget isLoading={isLoading} error={error}>
       <div className="card-body">
         <h5 className="card-title">Recent Commits</h5>
         {commits.map(

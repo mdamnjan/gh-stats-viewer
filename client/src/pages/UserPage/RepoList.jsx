@@ -1,6 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Card from "../../components/Card/Card";
 
+import { ExclamationTriangle } from "react-bootstrap-icons";
+
 const RepoList = ({ repos, error, isLoading }) => {
   const navigate = useNavigate();
 
@@ -8,9 +10,18 @@ const RepoList = ({ repos, error, isLoading }) => {
   return (
     <div className="repo-list">
       {error && (
-        <div>
-          {error.response?.status}
-          {error.response?.statusText}
+        <div
+          style={{
+            padding: "10px",
+            minHeight: "200px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <ExclamationTriangle style={{ marginRight: "5px" }} />
+          <span style={{ width: "80%" }}>{error.response.data}</span>
         </div>
       )}
       {isLoading && (
