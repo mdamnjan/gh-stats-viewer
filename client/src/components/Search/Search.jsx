@@ -18,7 +18,7 @@ const Search = ({ resource, resultsPerPage = 10 }) => {
     hasNextPage,
   } = useInfiniteQuery({
     queryKey: [`${resource}Search`, searchTerm],
-    queryFn: (pageParam) =>
+    queryFn: ({ pageParam = 1 }) =>
       search({
         resource: resource,
         searchTerm: searchTerm,
@@ -26,11 +26,11 @@ const Search = ({ resource, resultsPerPage = 10 }) => {
         perPage: resultsPerPage,
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rateLimit"] }),
-    getNextPageParam: (lastPage) => {
+    getNextPageParam: (lastPage, pageParam) => {
       if (lastPage?.data?.items.length < resultsPerPage) {
         return undefined;
       }
-      return lastPage + 1;
+      return pageParam.length + 1;
     },
     initialData: { pages: undefined },
     enabled: false,

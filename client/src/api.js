@@ -1,13 +1,14 @@
 import axios from "axios";
 import { SERVER_URL } from "./utils";
 
-export const getRateLimit = async () => {
-  return axios.get(`https://api.github.com/rate_limit`);
-};
+const axiosInstance = axios.create({
+  baseURL: SERVER_URL,
+  withCredentials: true,
+});
 
 export const search = async ({ resource, searchTerm, page, perPage }) => {
-  return axios.get(
-    `https://api.github.com/search/${resource}?q=${searchTerm}&page=${page}&per_page=${perPage}`
+  return axiosInstance.get(
+    `/search/${resource}?q=${searchTerm}&page=${page}&per_page=${perPage}`
   );
 };
 
@@ -64,18 +65,14 @@ export class UserClient {
   }
 
   async getUserRepos() {
-    return fetchData(`repos?user=${this.username}`)
+    return fetchData(`repos?user=${this.username}`);
   }
 
   async getUserDetails() {
-    return fetchData(`user-details?user=${this.username}`)
+    return fetchData(`user-details?user=${this.username}`);
   }
 }
 
 export const fetchData = async (url) => {
-  return axios
-    .get(`${SERVER_URL}/${url}`, {
-      withCredentials: true,
-    })
-    .then((res) => res.data);
+  return axiosInstance.get(url).then((res) => res.data);
 };

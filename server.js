@@ -21,6 +21,7 @@ import {
 import { getRateLimit, getRepos, getUser, getUserEvents } from "./api/user.js";
 import { errorHandler } from "./api/error.js";
 import { port, CLIENT_URL, SERVER_URL } from "./api/utils.js";
+import { searchUsers } from "./api/search.js";
 
 dotenv.config();
 
@@ -115,6 +116,8 @@ app.get(
 
 app.get("/logout", logout);
 app.get("/rate-limit", getRateLimit)
+
+app.get("/search/users", searchUsers)
 
 app.get("/user-details", getUser);
 app.get("/user-events", getUserEvents);
