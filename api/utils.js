@@ -31,6 +31,7 @@ export async function getResource(req, res, url, next) {
     return next(error, req, res, next);
   }
   if (results) {
+    res.status(results.status)
     return results.data;
   }
 }
