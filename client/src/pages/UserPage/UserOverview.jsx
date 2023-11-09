@@ -21,7 +21,7 @@ const UserOverview = ({ username, userData }) => {
       <div className="row">
         <div className="col-12">
           <LineChart
-            data={userEvents.data}
+            data={userEvents.data.results}
             isLoading={userData.isLoading}
             error={userData.error}
             title="User events"
@@ -33,7 +33,7 @@ const UserOverview = ({ username, userData }) => {
         <div className="col-md-4 col-xs-12">
           <NumberChart
             title="Followers"
-            data={userData.data.followers}
+            data={userData.data.results.followers}
             isLoading={userData.isLoading}
             error={userData.error}
           />
@@ -41,7 +41,7 @@ const UserOverview = ({ username, userData }) => {
         <div className="col-md-4 col-xs-12">
           <NumberChart
             title="Following"
-            data={userData.data.following}
+            data={userData.data.results.following}
             isLoading={userData.isLoading}
             error={userData.error}
           />
@@ -49,7 +49,7 @@ const UserOverview = ({ username, userData }) => {
         <div className="col-md-4 col-xs-12">
           <NumberChart
             title="Public Repos"
-            data={userData.data.public_repos}
+            data={userData.data.results.public_repos}
             isLoading={userData.isLoading}
             error={userData.error}
           />

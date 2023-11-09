@@ -29,49 +29,51 @@ const RepoPage = () => {
       queryKey: ["repoDetails"],
       queryFn: () => repoClient.getDetails(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["commits"],
       queryFn: () => repoClient.getCommits(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["repoLanguages"],
       queryFn: () => repoClient.getRepoLanguages(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["repoEvents"],
       queryFn: () => repoClient.getEvents(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["codeFrequency"],
       queryFn: () => repoClient.getCodeFrequency(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["commitActivity"],
       queryFn: () => repoClient.getCommitActivity(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["contributors"],
       queryFn: () => repoClient.getContributors(),
       initialData: [],
-      retry: false
+      retry: false,
     },
   ]);
 
+  console.log(codeFrequency);
+
   return (
     <div id="repo-page">
-      <h1>{repoDetails?.data?.full_name}</h1>
+      <h1>{repoDetails?.data?.results?.full_name}</h1>
       {error && (
         <span>
           {error.response
@@ -84,7 +86,7 @@ const RepoPage = () => {
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart
               title="Num Open Issues"
-              data={repoDetails?.data.open_issues_count}
+              data={repoDetails?.data.results?.open_issues_count}
               isLoading={repoDetails.isLoading}
               error={repoDetails.error}
             />
@@ -92,7 +94,7 @@ const RepoPage = () => {
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart
               title="Followers"
-              data={repoDetails?.data.subscribers_count}
+              data={repoDetails?.data.results?.subscribers_count}
               isLoading={repoDetails.isLoading}
               error={repoDetails.error}
             />
@@ -100,7 +102,7 @@ const RepoPage = () => {
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart
               title="Num Forks"
-              data={repoDetails?.data.forks_count}
+              data={repoDetails?.data.results?.forks_count}
               isLoading={repoDetails.isLoading}
               error={repoDetails.error}
             />
@@ -108,7 +110,7 @@ const RepoPage = () => {
           <div className="col-md-3 col-sm-6 col-xs-6">
             <NumberChart
               title="Stars"
-              data={repoDetails?.data.stargazers_count}
+              data={repoDetails?.data?.results?.stargazers_count}
               isLoading={repoDetails.isLoading}
               error={repoDetails.error}
             />
@@ -124,16 +126,17 @@ const RepoPage = () => {
             className="col-lg-8 col-sm-12"
           >
             <LineChart
+              status={commitActivity.data.status}
               title="Commits"
               type="commit"
-              data={commitActivity.data}
+              data={commitActivity?.data?.results}
               isLoading={commitActivity.isLoading}
               error={commitActivity.error}
             />
           </div>
           <div className="col-lg-4 col-sm-12">
             <CommitList
-              commits={commits?.data?.commits?.slice(-5, -1) || []}
+              commits={commits?.data?.results?.commits?.slice(-5, -1) || []}
               isLoading={commits.isLoading}
               error={commits.error}
             />
@@ -143,7 +146,7 @@ const RepoPage = () => {
           <div className="col-lg-6 col-sm-12">
             <BarChart
               title="Languages Used"
-              data={repoLanguages?.data}
+              data={repoLanguages?.data?.results}
               isLoading={repoLanguages.isLoading}
               error={repoLanguages.error}
             />
@@ -151,7 +154,7 @@ const RepoPage = () => {
           <div className="col-lg-6 col-sm-12">
             <LineChart
               title="Events"
-              data={events.data}
+              data={events.data?.results}
               isLoading={events.isLoading}
               error={events.error}
               type="event"
@@ -161,8 +164,9 @@ const RepoPage = () => {
         <div id="row3" className="dashboard-row row">
           <div className="col-md-6 col-sm-12">
             <LineChart
+              status={codeFrequency.data.status}
               title="Code Frequency"
-              data={codeFrequency.data}
+              data={codeFrequency.data?.results}
               isLoading={codeFrequency.isLoading}
               error={codeFrequency.error}
               type="frequency"
@@ -170,8 +174,9 @@ const RepoPage = () => {
           </div>
           <div className="col-md-6 col-sm-12">
             <BarChart
+              status={contributors.data.status}
               title="Contributors"
-              data={contributors?.data}
+              data={contributors?.data?.results}
               isLoading={contributors.isLoading}
               error={contributors.error}
               type="contributors"

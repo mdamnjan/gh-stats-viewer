@@ -19,25 +19,29 @@ const UserPage = () => {
   let { username } = useParams();
 
   const userClient = new UserClient(username);
-  
+
   const [userData, repos] = useQueries([
     {
       queryKey: ["userData"],
       queryFn: () => userClient.getUserDetails(),
       initialData: [],
-      retry: false
+      retry: false,
     },
     {
       queryKey: ["userRepos"],
       queryFn: () => userClient.getUserRepos(),
-      initialData: [],
-      retry: false
+      initialData: { results: [] },
+      retry: false,
     },
   ]);
 
   return (
     <>
-      <ProfileSideBar user={userData.data} isLoading={userData.isLoading} error={userData.error} />
+      <ProfileSideBar
+        user={userData.data.results}
+        isLoading={userData.isLoading}
+        error={userData.error}
+      />
       <div className="contents">
         <Tabs
           onClick={(e) => setIsRepoView(!isRepoView)}
@@ -55,7 +59,7 @@ const UserPage = () => {
         )}
         {isRepoView && (
           <RepoList
-            repos={repos.data}
+            repos={repos.data.results}
             isLoading={repos.isLoading}
             error={repos.error}
           />

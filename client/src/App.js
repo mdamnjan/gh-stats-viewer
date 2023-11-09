@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Github, HouseHeart } from "react-bootstrap-icons";
 import axios from "axios";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useQuery } from "react-query";
 
 import HomePage from "./pages/HomePage/HomePage";
@@ -39,19 +39,23 @@ const RateLimits = ({ rateLimit }) => {
 };
 
 function App() {
-  const isLoggedIn = Cookies.get('isGithubAuthenticated');
+  const isLoggedIn = Cookies.get("isGithubAuthenticated");
   const { data: rateLimit } = useQuery({
     queryKey: ["rateLimit"],
     queryFn: () => fetchData("rate-limit"),
     initialData: {
-      resources: {
-        search: { limit: 0, remaining: 0 },
-        core: { limit: 0, remaining: 0 },
-        graphql: { limit: 0, remaining: 0 },
+      results: {
+        resources: {
+          search: { limit: 0, remaining: 0 },
+          core: { limit: 0, remaining: 0 },
+          graphql: { limit: 0, remaining: 0 },
+        },
       },
     },
   });
-  
+
+  console.log("rate limit", rateLimit);
+
   const handleLogin = () => {
     window.location = `${SERVER_URL}/auth/github`;
   };
@@ -89,7 +93,7 @@ function App() {
           </button>
         )}
       </header>
-      <RateLimits rateLimit={rateLimit} />
+      <RateLimits rateLimit={rateLimit.results} />
       <div id="container">
         <Routes>
           <Route

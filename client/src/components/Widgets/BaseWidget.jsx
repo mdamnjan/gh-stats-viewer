@@ -1,6 +1,21 @@
 import { ExclamationTriangle } from "react-bootstrap-icons";
 
-const BaseWidget = ({ children, error, isLoading }) => {
+const BaseWidget = ({ children, error, isLoading, status }) => {
+  console.log("base widget status", status);
+  if (status === 202) {
+    return (
+      <div
+        className="card chart-container"
+        style={{ padding: "10px", minHeight: "200px" }}
+      >
+        <span style={{ verticalAlign: "middle" }}>
+          <ExclamationTriangle style={{ marginRight: "5px" }} />
+          {"Loading..."}
+          <span>{"This query is quite large and may take some time."}</span>
+        </span>
+      </div>
+    );
+  }
   if (isLoading) {
     return (
       <div
@@ -28,7 +43,7 @@ const BaseWidget = ({ children, error, isLoading }) => {
         }}
       >
         <ExclamationTriangle style={{ marginRight: "5px" }} />
-        <span style={{width: "80%"}}>{error.response.data}</span>
+        <span style={{ width: "80%" }}>{error.response.data}</span>
       </div>
     );
   }

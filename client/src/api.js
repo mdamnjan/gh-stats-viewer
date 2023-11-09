@@ -74,5 +74,8 @@ export class UserClient {
 }
 
 export const fetchData = async (url) => {
-  return axiosInstance.get(url).then((res) => res.data);
+  return axiosInstance.get(url).then((res) => {
+    let data = { status: res.status, results: res.data };
+    return data;
+  });
 };

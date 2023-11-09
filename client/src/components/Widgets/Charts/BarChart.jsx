@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-const BarChart = ({ data, isLoading, error, title, type }) => {
+const BarChart = ({ data, isLoading, error, title, type, status }) => {
   let options = {
     indexAxis: "y",
     elements: {
@@ -96,7 +96,7 @@ const BarChart = ({ data, isLoading, error, title, type }) => {
   };
 
   return (
-    <BaseWidget isLoading={isLoading} error={error}>
+    <BaseWidget isLoading={isLoading} error={error} status={status}>
       <Bar options={options} data={chartData} />
     </BaseWidget>
   );
