@@ -5,7 +5,14 @@ const SearchItem = ({ type, data }) => {
   if (type === "user") {
     return (
       <div
+        tabIndex={0}
         onClick={() => navigate(`/users/${data.login}`)}
+        onKeyDown={(e) => {
+          console.log(e.code)
+          if (e.code === "Enter") {
+            navigate(`/users/${data.login}`);
+          }
+        }}
         data-bs-theme="dark"
         key={`user-${data.login}`}
         className="card search-result"
@@ -22,7 +29,7 @@ const SearchItem = ({ type, data }) => {
   }
   if (type === "repo") {
     // TODO
-    return
+    return;
   }
 };
 export default SearchItem;

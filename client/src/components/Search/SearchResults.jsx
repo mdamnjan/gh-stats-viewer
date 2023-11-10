@@ -29,7 +29,7 @@ const SearchResults = ({ type, hasNextPage, pages, error, showMore }) => {
   const firstPage = pages[0].data;
 
   return (
-    <div class="search-results">
+    <div aria-label="Search Results" class="search-results">
       {
         <p class="fw-lighter">
           {firstPage.total_count.toLocaleString()} results found
