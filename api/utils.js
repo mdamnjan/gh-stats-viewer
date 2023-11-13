@@ -16,6 +16,8 @@ export function getOctokit(req) {
   let octokit;
   if (req.isAuthenticated()) {
     octokit = new Octokit({ auth: req.user.token });
+  } else if (process.env.GH_TOKEN) {
+    octokit = new Octokit({ auth: process.env.GH_TOKEN });
   } else {
     octokit = new Octokit({});
   }
@@ -31,7 +33,7 @@ export async function getResource(req, res, url, next) {
     return next(error, req, res, next);
   }
   if (results) {
-    res.status(results.status)
+    res.status(results.status);
     return results.data;
   }
 }
