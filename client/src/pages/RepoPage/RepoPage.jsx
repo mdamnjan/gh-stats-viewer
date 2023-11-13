@@ -26,54 +26,64 @@ const RepoPage = () => {
     contributors,
   ] = useQueries([
     {
-      queryKey: ["repoDetails"],
+      queryKey: ["repoDetails", repo.name],
       queryFn: () => repoClient.getDetails(),
       initialData: [],
       retry: false,
     },
     {
-      queryKey: ["commits"],
+      queryKey: ["commits", repo.name],
       queryFn: () => repoClient.getCommits(),
       initialData: [],
       retry: false,
     },
     {
-      queryKey: ["repoLanguages"],
+      queryKey: ["repoLanguages", repo.name],
       queryFn: () => repoClient.getRepoLanguages(),
       initialData: [],
       retry: false,
     },
     {
-      queryKey: ["repoEvents"],
+      queryKey: ["repoEvents", repo.name],
       queryFn: () => repoClient.getEvents(),
       initialData: [],
       retry: false,
     },
     {
-      queryKey: ["codeFrequency"],
+      queryKey: ["codeFrequency", repo.name],
       queryFn: () => repoClient.getCodeFrequency(),
       initialData: [],
       retry: false,
     },
     {
-      queryKey: ["commitActivity"],
+      queryKey: ["commitActivity", repo.name],
       queryFn: () => repoClient.getCommitActivity(),
       initialData: [],
       retry: false,
     },
     {
-      queryKey: ["contributors"],
+      queryKey: ["contributors", repo.name],
       queryFn: () => repoClient.getContributors(),
       initialData: [],
       retry: false,
     },
   ]);
 
-  console.log(codeFrequency);
+  if (commitActivity.data.status === 202) {
+    commitActivity.refetch()
+  }
+
+  if (codeFrequency.data.status === 202) {
+    codeFrequency.refetch()
+  }
+
+  if (contributors.data.status === 202) {
+    contributors.refetch()
+  }
 
   return (
     <div id="repo-page">
-      <h1>{repoDetails?.data?.results?.full_name}</h1>
+      <h1><a href={repoDetails?.data?.results?.html_url}>{repoDetails?.data?.results?.full_name}</a></h1>
       {error && (
         <span>
           {error.response
@@ -83,7 +93,7 @@ const RepoPage = () => {
       )}
       <div className="repo-dashboard container">
         <div id="row1" className="dashboard-row row">
-          <div className="col-md-3 col-sm-6 col-xs-6">
+          <div className="col-md-3 col-sm-6 col-xs-6 col-xxs-6">
             <NumberChart
               title="Num Open Issues"
               data={repoDetails?.data.results?.open_issues_count}
@@ -91,7 +101,7 @@ const RepoPage = () => {
               error={repoDetails.error}
             />
           </div>
-          <div className="col-md-3 col-sm-6 col-xs-6">
+          <div className="col-md-3 col-sm-6 col-xs-6 col-xxs-6">
             <NumberChart
               title="Followers"
               data={repoDetails?.data.results?.subscribers_count}
@@ -99,7 +109,7 @@ const RepoPage = () => {
               error={repoDetails.error}
             />
           </div>
-          <div className="col-md-3 col-sm-6 col-xs-6">
+          <div className="col-md-3 col-sm-6 col-xs-6 col-xxs-6">
             <NumberChart
               title="Num Forks"
               data={repoDetails?.data.results?.forks_count}
@@ -107,7 +117,7 @@ const RepoPage = () => {
               error={repoDetails.error}
             />
           </div>
-          <div className="col-md-3 col-sm-6 col-xs-6">
+          <div className="col-md-3 col-sm-6 col-xs-6 col-xxs-6">
             <NumberChart
               title="Stars"
               data={repoDetails?.data?.results?.stargazers_count}

@@ -1,7 +1,6 @@
 import { ExclamationTriangle } from "react-bootstrap-icons";
 
 const BaseWidget = ({ children, error, isLoading, status }) => {
-  console.log("base widget status", status);
   if (status === 202) {
     return (
       <div
