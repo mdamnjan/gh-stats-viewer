@@ -2,7 +2,6 @@
   text-align: center;
   min-width: 280px;
   color: white;
-  background-color: #1e2025;
   min-height: 100vh;
 }
 
@@ -23,7 +22,6 @@ body {
 
 .App-header {
   margin-bottom: 30px;
-  background-color: #16181c;
   display: flex;
   flex-direction: row;
   align-items: center;

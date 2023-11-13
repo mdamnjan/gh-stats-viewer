@@ -13,7 +13,6 @@ const SearchItem = ({ type, data }) => {
             navigate(`/users/${data.login}`);
           }
         }}
-        data-bs-theme="dark"
         key={`user-${data.login}`}
         className="card search-result"
       >

@@ -13,7 +13,6 @@ const Card = ({ key, repo, onClick, isLoading }) => {
   if (isLoading) {
     return (
       <div
-        data-bs-theme="dark"
         key={`repo-${key}`}
         className="card placeholder-glow"
       >
@@ -26,7 +25,7 @@ const Card = ({ key, repo, onClick, isLoading }) => {
   }
 
   return (
-    <div data-bs-theme="dark" key={`repo-${repo.id}`} className="card">
+    <div key={`repo-${repo.id}`} className="card">
       <SummaryTab repo={repo} />
       <div className="card-footer text-body-secondary">
         <h6>{getLastUpdatedString(repo.pushed_at)}</h6>
