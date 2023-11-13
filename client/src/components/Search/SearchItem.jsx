@@ -8,7 +8,7 @@ const SearchItem = ({ type, data }) => {
         tabIndex={0}
         onClick={() => navigate(`/users/${data.login}`)}
         onKeyDown={(e) => {
-          console.log(e.code)
+          console.log(e.code);
           if (e.code === "Enter") {
             navigate(`/users/${data.login}`);
           }
@@ -22,8 +22,14 @@ const SearchItem = ({ type, data }) => {
           alt="user's avatar"
           src={data.avatar_url}
         ></img>
-        <h1 style={{ display: "inline-block" }}> {data.login}</h1>
-        <p>{data.bio}</p>
+        <div>
+          <h1 style={{ display: "block" }}> {data.login}</h1>
+          {data.type === "Organization" && (
+            <span className="badge rounded-pill text-bg-secondary">
+              {data.type}
+            </span>
+          )}
+        </div>
       </div>
     );
   }

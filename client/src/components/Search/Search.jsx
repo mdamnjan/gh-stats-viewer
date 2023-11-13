@@ -47,7 +47,7 @@ const Search = ({ resource, resultsPerPage = 10 }) => {
         }}
       >
         <SearchBar
-          placeholderText={`Search for ${resource}`}
+          placeholderText={resource === "users"? "Search for a user/organization": "Search for a repo"}
           onChange={(e) => {
             setSearchTerm(e.target.value);
           }}
