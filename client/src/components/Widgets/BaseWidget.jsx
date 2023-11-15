@@ -1,49 +1,45 @@
 import { ExclamationTriangle } from "react-bootstrap-icons";
 
+const EmptyState = ({ children }) => {
+  return (
+    <div
+      className="card chart-container"
+      style={{
+        padding: "30px",
+        minHeight: "200px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      <ExclamationTriangle style={{ marginRight: "5px" }} />
+      {children}
+    </div>
+  );
+};
+
 const BaseWidget = ({ children, error, isLoading, status }) => {
   if (status === 202) {
     return (
-      <div
-        className="card chart-container"
-        style={{ padding: "10px", minHeight: "200px" }}
-      >
-        <span style={{ verticalAlign: "middle" }}>
-          <ExclamationTriangle style={{ marginRight: "5px" }} />
-          {"Loading..."}
-          <span>{"This query is quite large and may take some time."}</span>
-        </span>
-      </div>
+      <EmptyState>
+        <span>{"Loading..."}</span>
+        <span>{"This query is quite large and may take some time."}</span>
+      </EmptyState>
     );
   }
   if (isLoading) {
     return (
-      <div
-        className="card chart-container"
-        style={{ padding: "10px", minHeight: "200px" }}
-      >
-        <span style={{ verticalAlign: "middle" }}>
-          <ExclamationTriangle style={{ marginRight: "5px" }} />
-          {"No results found."}
-        </span>
-      </div>
+      <EmptyState>
+        <span>{"No results found."}</span>
+      </EmptyState>
     );
   }
   if (error) {
     return (
-      <div
-        className="card chart-container"
-        style={{
-          padding: "10px",
-          minHeight: "200px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <ExclamationTriangle style={{ marginRight: "5px" }} />
-        <span style={{ width: "80%" }}>{error.response.data}</span>
-      </div>
+      <EmptyState>
+        <span >{error.response.data}</span>
+      </EmptyState>
     );
   }
   return (
