@@ -1,15 +1,6 @@
-.repo-dashboard {
-  margin: 20px;
-  justify-self: center;
-  display: flex;
-  flex-wrap:wrap;
-  /* border: 3px solid grey; */
-  border-radius: 10px;
-  flex-direction: column;
-}
 
 #repo-page {
-    width: 100%;
+  width: 100%;
 }
 
 /* #row1 {
@@ -25,7 +16,59 @@
 } */
 
 .dashboard-row {
-    /* display: flex; */
-    /* width: 100%; */
-    /* flex-wrap: wrap; */
+  /* display: flex; */
+  /* width: 100%; */
+  /* flex-wrap: wrap; */
+  justify-self: center;
+
 }
+
+.repo-dashboard {
+    max-width: 1400px;
+    margin: auto;
+    width: 90%;
+}
+
+.row {
+  display: grid !important;
+}
+
+.row > * {
+    /* https://github.com/chartjs/Chart.js/issues/4156 */
+    min-width: 0;
+    grid-auto-rows: 1fr;
+}
+
+.row1 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.row2 {
+    grid-template-columns: 2fr 1fr;
+  }
+
+.row3,
+.row4 {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 1100px) {
+  .row1 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .row2,
+  .row3,
+  .row4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 500px) {
+    .row2,
+    .row3,
+    .row4 {
+      grid-template-columns: 1fr;
+    }
+  }

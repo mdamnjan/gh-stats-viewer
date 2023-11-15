@@ -19,7 +19,7 @@ const EmptyState = ({ children }) => {
   );
 };
 
-const BaseWidget = ({ children, error, isLoading, status }) => {
+const BaseWidget = ({ children, error, isLoading, status, style }) => {
   if (status === 202) {
     return (
       <EmptyState>
@@ -45,7 +45,7 @@ const BaseWidget = ({ children, error, isLoading, status }) => {
   return (
     <div
       className="card chart-container"
-      style={{ padding: "10px", minHeight: "200px" }}
+      style={{ padding: "10px", minWidth: 0, minHeight: "150px", ...style}}
     >
       {children}
     </div>

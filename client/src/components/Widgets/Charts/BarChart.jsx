@@ -97,7 +97,7 @@ const BarChart = ({ data, isLoading, error, title, type, status }) => {
 
   return (
     <BaseWidget isLoading={isLoading} error={error} status={status}>
-      <Bar options={options} data={chartData} />
+      <Bar style={{minHeight: "300px"}} options={options} data={chartData} />
     </BaseWidget>
   );
 };

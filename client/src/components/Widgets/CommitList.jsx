@@ -2,7 +2,17 @@ import BaseWidget from "./BaseWidget";
 
 const CommitList = ({ commits, isLoading, error }) => {
   return (
-    <BaseWidget isLoading={isLoading} error={error}>
+    <BaseWidget
+      isLoading={isLoading}
+      error={error}
+      style={{
+        minWidth: "0px",
+        minHeight: "150px",
+        position: "absolute",
+        height: " calc(100% - 40px)",
+        width: "calc(100% - 25px)",
+      }}
+    >
       <div className="card-body">
         <h5 className="card-title">Recent Commits</h5>
         {commits.map(
@@ -25,9 +35,20 @@ const CommitList = ({ commits, isLoading, error }) => {
                   alt="Github user's avatar"
                   src={commit?.committer?.avatar_url}
                 />
-                <div style={{position: "relative", width: "100%", height: "55px"}}>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "55px",
+                  }}
+                >
                   <h5>{commit?.committer?.login}</h5>
-                  <span className="text-truncate" style={{position: "absolute", width: "100%"}}>{commit.commit.message}</span>
+                  <span
+                    className="text-truncate"
+                    style={{ position: "absolute", width: "100%" }}
+                  >
+                    {commit.commit.message}
+                  </span>
                 </div>
               </div>
             )

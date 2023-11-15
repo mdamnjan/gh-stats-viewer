@@ -181,7 +181,7 @@ const LineChart = ({ data, isLoading, error, title, type, status }) => {
 
   return (
     <BaseWidget isLoading={isLoading} error={error} status={status}>
-      <Line options={options} data={processedData} />
+      <Line style={{minHeight: "300px"}} options={options} data={processedData} />
     </BaseWidget>
   );
 };

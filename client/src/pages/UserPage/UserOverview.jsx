@@ -12,25 +12,17 @@ const UserOverview = ({ username, userData }) => {
       queryKey: ["userEvents"],
       queryFn: () => userClient.getUserEvents(),
       initialData: [],
-      retry: false
+      retry: false,
     },
   ]);
 
   return (
     <div>
-      <div className="row">
-        <div className="col-12">
-          <LineChart
-            data={userEvents.data.results}
-            isLoading={userData.isLoading}
-            error={userData.error}
-            title="User events"
-            type="event"
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-4 col-xs-12">
+      <div
+        className="row row1"
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
+      >
+        <div>
           <NumberChart
             title="Followers"
             data={userData.data.results.followers}
@@ -38,20 +30,34 @@ const UserOverview = ({ username, userData }) => {
             error={userData.error}
           />
         </div>
-        <div className="col-md-4 col-xs-12">
+        {/* <div>
           <NumberChart
             title="Following"
             data={userData.data.results.following}
             isLoading={userData.isLoading}
             error={userData.error}
           />
-        </div>
-        <div className="col-md-4 col-xs-12">
+        </div> */}
+        <div>
           <NumberChart
             title="Public Repos"
             data={userData.data.results.public_repos}
             isLoading={userData.isLoading}
             error={userData.error}
+          />
+        </div>
+      </div>
+      <div
+        className="row row2"
+        style={{ display: "grid", gridTemplateColumns: "1fr" }}
+      >
+        <div>
+          <LineChart
+            data={userEvents.data.results}
+            isLoading={userData.isLoading}
+            error={userData.error}
+            title="User events"
+            type="event"
           />
         </div>
       </div>
