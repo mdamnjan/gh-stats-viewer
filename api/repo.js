@@ -42,7 +42,7 @@ export async function getCommits(req, res, next) {
     res,
     next,
     url: `GET /repos/${req.query.user}/${req.query.repo}/commits?per_page=${req.query.num_commits}`,
-  }).then((results) => res.json({ commits: results.data, commitCount: 0 }));
+  }).then((results) => res.json(results));
 }
 
 export async function getContributors(req, res, next) {

@@ -146,7 +146,7 @@ const RepoPage = () => {
           </div>
           <div className="col-lg-4 col-sm-12">
             <CommitList
-              commits={commits?.data?.results?.commits?.slice(-5, -1) || []}
+              commits={commits?.data?.results?.slice(-5, -1) || []}
               isLoading={commits.isLoading}
               error={commits.error}
             />

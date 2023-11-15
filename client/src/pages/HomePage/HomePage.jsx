@@ -5,9 +5,9 @@ const HomePage = () => {
   return (
     <div id="home-page-container">
       <div>
-        <h1>Github Stats Viewer</h1>
+        <h1>GitHub Stats Viewer</h1>
         <p>
-          See stats related to a Github user's profile and their repositories
+          See stats related to a GitHub user's profile and their repositories
         </p>
         <hr />
         <Search resource="users"/>
