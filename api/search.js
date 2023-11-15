@@ -1,12 +1,11 @@
-import { getResource } from "./utils.js";
+import { GhApiClient } from "./utils.js";
 
 export async function searchUsers(req, res, next) {
-  return getResource({
-    req,
-    res,
-    next,
+  const GhApi = new GhApiClient({ req, res, next });
+
+  return GhApi.rest({
     url: `GET /search/users?q=${req.query.q}&page=${req.query.page}&per_page=${req.query.per_page}`,
-  }).then((results) => res.json(results));
+  });
 }
 
 export async function searchRepos(req, res, next) {
@@ -21,10 +20,9 @@ export async function searchRepos(req, res, next) {
 }
 
 export async function searchCommits(req, res, next) {
-  return getResource({
-    req,
-    res,
-    next,
+  const GhApi = new GhApiClient({ req, res, next });
+
+  return GhApi.rest({
     url: `GET /search/commits?q=${req.query.q}&page=${req.query.page}&per_page=${req.query.per_page}`,
-  }).then((results) => res.json(results));
+  });
 }

@@ -1,15 +1,16 @@
-import { getResource } from "./utils.js";
+import { GhApiClient } from "./utils.js";
 
 export async function getUser(req, res, next) {
-  return getResource({
-    req,
-    res,
-    next,
+  const GhApi = new GhApiClient({ req, res, next });
+
+  return GhApi.rest({
     url: `GET /users/${req.query.user}`,
-  }).then((results) => res.json(results));
+  });
 }
 
 export async function getUserEvents(req, res, next) {
+  const GhApi = new GhApiClient({ req, res, next });
+
   let url;
   if (req.isAuthenticated()) {
     url = `GET /users/${req.query.user}/events?per_page=${req.query.num_events}`;
@@ -17,15 +18,12 @@ export async function getUserEvents(req, res, next) {
     url = `GET /users/${req.query.user}/events/public?per_page=${req.query.num_events}`;
   }
 
-  return getResource({
-    req,
-    res,
-    next,
-    url: url,
-  }).then((results) => res.json(results));
+  return GhApi.rest({ url });
 }
 
 export async function getRepos(req, res, next) {
+  const GhApi = new GhApiClient({ req, res, next });
+
   let url;
   if (req.isAuthenticated() && req.user.username == req.query.user) {
     // endpoint returns private repos as well if the Github App is authorized AND installed
@@ -34,19 +32,14 @@ export async function getRepos(req, res, next) {
   } else {
     url = `GET /users/${req.query.user}/repos?sort=pushed`;
   }
-  return getResource({
-    req,
-    res,
-    next,
-    url: url,
-  }).then((results) => res.json(results));
+
+  return GhApi.rest({ url });
 }
 
 export async function getRateLimit(req, res, next) {
-  return getResource({
-    req,
-    res,
-    next,
+  const GhApi = new GhApiClient({ req, res, next });
+
+  return GhApi.rest({
     url: "GET /rate_limit",
-  }).then((results) => res.json(results));
+  });
 }
