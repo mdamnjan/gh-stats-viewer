@@ -24,16 +24,37 @@ export function getOctokit(req) {
   return octokit;
 }
 
-export async function getResource({ req, res, next, url }) {
-  let octokit = getOctokit(req);
-  let results;
-  try {
-    results = await octokit.request(url);
-  } catch (error) {
-    return next(error, req, res, next);
+export class GhApiClient {
+  constructor({ req, res, next }) {
+    this.req = req;
+    this.res = res;
+    this.next = next;
+    this.octokit = getOctokit(req);
   }
-  if (results) {
-    res.status(results.status);
-    return results.data;
+
+  async rest({ url }) {
+    let results;
+    try {
+      results = await this.octokit.request(url);
+    } catch (error) {
+      return this.next(error, this.req, this.res, this.next);
+    }
+    if (results) {
+      this.res.status(results.status);
+      return this.res.json(results.data);
+    }
+  }
+
+  async graphql({ query }) {
+    let results;
+    try {
+      results = await this.octokit.graphql(query);
+    } catch (error) {
+      return next(error, this.req, this.res, this.next);
+    }
+    if (results) {
+      this.res.status(results.status);
+      return this.res.json(results.data);
+    }
   }
 }
