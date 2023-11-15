@@ -24,7 +24,7 @@ export function getOctokit(req) {
   return octokit;
 }
 
-export async function getResource(req, res, url, next) {
+export async function getResource({ req, res, next, url }) {
   let octokit = getOctokit(req);
   let results;
   try {

@@ -3,7 +3,7 @@ export function errorHandler(err, req, res, next) {
   if (err.status) {
     res.status(err.status);
     if (err.status == 401) {
-      return
+      res.send("Unauthorized, you do not have access to this resource.")
     }
     if (err.status == 403) {
       res.send(

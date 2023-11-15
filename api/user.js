@@ -1,74 +1,52 @@
-import { getOctokit } from "./utils.js";
+import { getResource } from "./utils.js";
 
 export async function getUser(req, res, next) {
-  let octokit = getOctokit(req);
-  let user;
-  try {
-    user = await octokit.rest.users.getByUsername({
-      username: req.query.user,
-    });
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-  return res.json(user.data);
+  return getResource({
+    req,
+    res,
+    next,
+    url: `GET /users/${req.query.user}`,
+  }).then((results) => res.json(results));
 }
 
 export async function getUserEvents(req, res, next) {
-  let octokit = getOctokit(req);
-  let events;
-  try {
-    if (req.isAuthenticated()) {
-      events = await octokit.rest.activity.listEventsForAuthenticatedUser({
-        username: req.query.user,
-        per_page: req.query.num_events,
-      });
-    } else {
-      events = await octokit.rest.activity.listPublicEventsForUser({
-        username: req.query.user,
-        per_page: req.query.num_events,
-      });
-    }
-  } catch (error) {
-    return next(error, req, res, next);
+  let url;
+  if (req.isAuthenticated()) {
+    url = `GET /users/${req.query.user}/events?per_page=${req.query.num_events}`;
+  } else {
+    url = `GET /users/${req.query.user}/events/public?per_page=${req.query.num_events}`;
   }
-  return res.json(events.data);
+
+  return getResource({
+    req,
+    res,
+    next,
+    url: url,
+  }).then((results) => res.json(results));
 }
 
 export async function getRepos(req, res, next) {
-  let repos;
-  let octokit = getOctokit(req);
-
+  let url;
   if (req.isAuthenticated() && req.user.username == req.query.user) {
     // endpoint returns private repos as well if the Github App is authorized AND installed
     // see https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps#difference-between-authorization-and-installation
-    try {
-      repos = await octokit.rest.repos.listForAuthenticatedUser({
-        sort: "pushed",
-      });
-    } catch (error) {
-      return next(error, req, res, next);
-    }
+    url = `GET /user/repos?sort=pushed`;
   } else {
-    try {
-      repos = await octokit.rest.repos.listForUser({
-        username: req.query.user,
-        sort: "pushed",
-      });
-    } catch (error) {
-      return next(error, req, res, next);
-    }
+    url = `GET /users/${req.query.user}/repos?sort=pushed`;
   }
-  return res.json(repos.data);
+  return getResource({
+    req,
+    res,
+    next,
+    url: url,
+  }).then((results) => res.json(results));
 }
 
 export async function getRateLimit(req, res, next) {
-  let octokit = getOctokit(req);
-  let rateLimit;
-  try {
-    rateLimit = await octokit.request("GET /rate_limit");
-  } catch (error) {
-    return next(error, req, res, next);
-  }
-
-  return res.json(rateLimit.data);
+  return getResource({
+    req,
+    res,
+    next,
+    url: "GET /rate_limit",
+  }).then((results) => res.json(results));
 }
