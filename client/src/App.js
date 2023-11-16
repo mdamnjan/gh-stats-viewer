@@ -7,36 +7,13 @@ import { useQuery } from "react-query";
 import HomePage from "./pages/HomePage/HomePage";
 import RepoPage from "./pages/RepoPage/RepoPage";
 import UserPage from "./pages/UserPage/UserPage";
+
+import RateLimits from "./components/common/RateLimits";
+
 import { SERVER_URL } from "./utils";
 import "./App.css";
 
 import { fetchData } from "./api";
-
-const RateLimits = ({ rateLimit }) => {
-  const limits = rateLimit.resources;
-  return (
-    <div>
-      <div className="badge text" style={{ display: "block" }}>
-        <span className="h5">{`Rate limits`}</span>
-      </div>
-      <div className="badge text-bg-secondary">
-        <span className="h6">
-          {"Search"}: {`${limits.search.remaining}/${limits.search.limit}`}
-        </span>
-      </div>
-      <div className="badge text-bg-secondary">
-        <span className="h6">
-          {"REST"}: {`${limits.core.remaining}/${limits.core.limit}`}
-        </span>
-      </div>
-      <div className="badge text-bg-secondary">
-        <span className="h6">
-          {"GraphQL"}: {`${limits.graphql.remaining}/${limits.graphql.limit}`}
-        </span>
-      </div>
-    </div>
-  );
-};
 
 function App() {
   const isLoggedIn = Cookies.get("isGithubAuthenticated");
@@ -93,8 +70,7 @@ function App() {
           </button>
         )}
       </header>
-      <RateLimits rateLimit={rateLimit.results} />
-      <div id="container">
+      <div id="container" style={{minHeight: "100vh"}}>
         <Routes>
           <Route
             path="*"
@@ -119,6 +95,9 @@ function App() {
           <Route path="/repos/:username/:repo" element={<RepoPage />} />
         </Routes>
       </div>
+      <footer data-bs-theme="dark" className="App-footer">
+        <RateLimits rateLimit={rateLimit.results} />
+      </footer>
     </div>
   );
 }

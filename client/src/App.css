@@ -21,16 +21,25 @@ body {
   }
 }
 
-.App-header {
-  margin-bottom: 30px;
+.App-header, .App-footer {
   background-color: #16181c;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
   font-size: calc(10px + 2vmin);
   padding: 10px;
   color: white;
+}
+
+.App-footer {
+  justify-content: center;
+  padding-bottom: 30px;
+  margin-top: 30px;
+}
+
+.App-header {
+  margin-bottom: 30px;
+  justify-content: flex-end;
 }
 
 .App-link {

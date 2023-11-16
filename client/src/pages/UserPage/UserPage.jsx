@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BarChartLine, JournalCode } from "react-bootstrap-icons";
 
 import { useParams } from "react-router-dom";
 import { useQueries } from "react-query";
+import { UserClient } from "../../api";
 
 import "../../App.css";
+
+import BackButton from "../../components/common/BackButton";
 import Tabs from "../../components/Tabs/Tabs";
 import ProfileSideBar from "../../components/Profile/ProfileSideBar";
-import { fetchData } from "../../utils";
 import RepoList from "./RepoList";
 import UserOverview from "./UserOverview";
-
-import { UserClient } from "../../api";
 
 const UserPage = () => {
   const [isRepoView, setIsRepoView] = useState(true);
@@ -37,6 +37,7 @@ const UserPage = () => {
 
   return (
     <>
+      <BackButton to="/" />
       <ProfileSideBar
         user={userData.data.results}
         isLoading={userData.isLoading}
