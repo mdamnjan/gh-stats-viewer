@@ -43,3 +43,44 @@ export async function getRateLimit(req, res, next) {
     url: "GET /rate_limit",
   });
 }
+
+export async function getUserLanguages(req, res, next) {
+  const GhApi = new GhApiClient({ req, res, next });
+
+  const processResults = (results) => {
+    let languagesAggregate = {};
+
+    results.user.repositories.nodes.forEach((repoNode) => {
+      repoNode.languages.edges.forEach((edge) => {
+        if (languagesAggregate[edge.node.name]) {
+          languagesAggregate[edge.node.name] += edge.size;
+        } else {
+          languagesAggregate[edge.node.name] = edge.size;
+        }
+      });
+    });
+    return languagesAggregate;
+  };
+
+  return GhApi.graphql({
+    query: `query {
+      user(login: "${req.query.user}") {
+        repositories(last:100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+          nodes {
+            name
+            languages(last:100) {
+              totalSize
+					    edges {
+						    size
+						      node {
+							      name
+						      }
+					    }
+            }
+          }
+        }
+      }
+    }`,
+    dataHandlerFn: processResults,
+  });
+}

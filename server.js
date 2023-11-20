@@ -18,7 +18,7 @@ import {
   getRepoIssues,
   getRepoLanguages,
 } from "./api/repo.js";
-import { getRateLimit, getRepos, getUser, getUserEvents } from "./api/user.js";
+import { getRateLimit, getRepos, getUser, getUserEvents, getUserLanguages } from "./api/user.js";
 import { errorHandler } from "./api/error.js";
 import { port, CLIENT_URL, SERVER_URL } from "./api/utils.js";
 import { searchCommits, searchRepos, searchUsers } from "./api/search.js";
@@ -123,6 +123,7 @@ app.get("/search/commits", searchCommits)
 
 app.get("/user-details", getUser);
 app.get("/user-events", getUserEvents);
+app.get("/user-languages", getUserLanguages)
 
 app.get("/repos", getRepos);
 

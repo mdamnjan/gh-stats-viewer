@@ -3,18 +3,27 @@ import LineChart from "../../components/Widgets/Charts/LineChart";
 
 import { useQueries } from "react-query";
 import { UserClient } from "../../api";
+import BarChart from "../../components/Widgets/Charts/BarChart";
 
 const UserOverview = ({ username, userData }) => {
   const userClient = new UserClient(username);
 
-  const [userEvents] = useQueries([
+  const [userEvents, userLanguages] = useQueries([
     {
       queryKey: ["userEvents"],
       queryFn: () => userClient.getUserEvents(),
       initialData: [],
       retry: false,
     },
+    {
+      queryKey: ["userLanguages"],
+      queryFn: () => userClient.getUserLanguages(),
+      initialData: [],
+      retry: false,
+    },
   ]);
+
+  console.log("languages", userLanguages);
 
   return (
     <div>
@@ -49,7 +58,7 @@ const UserOverview = ({ username, userData }) => {
       </div>
       <div
         className="row row2"
-        style={{ display: "grid", gridTemplateColumns: "1fr" }}
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
       >
         <div>
           <LineChart
@@ -58,6 +67,14 @@ const UserOverview = ({ username, userData }) => {
             error={userData.error}
             title="User events"
             type="event"
+          />
+        </div>
+        <div>
+          <BarChart
+            title="User Languages"
+            data={userLanguages.data.results}
+            isLoading={userLanguages.isLoading}
+            error={userLanguages.error}
           />
         </div>
       </div>

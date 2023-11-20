@@ -45,16 +45,18 @@ export class GhApiClient {
     }
   }
 
-  async graphql({ query }) {
+  async graphql({ query, dataHandlerFn }) {
     let results;
     try {
       results = await this.octokit.graphql(query);
     } catch (error) {
-      return next(error, this.req, this.res, this.next);
+      return this.next(error, this.req, this.res, this.next);
     }
     if (results) {
-      this.res.status(results.status);
-      return this.res.json(results.data);
+      if (dataHandlerFn) {
+        results = dataHandlerFn(results)
+      }
+      return this.res.json(results);
     }
   }
 }
