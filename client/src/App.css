@@ -65,6 +65,7 @@ body {
 .contents {
   flex-grow: 1;
   margin: 60px;
+  max-width: 1400px;
 }
 
 @media (max-width: 800px) {
