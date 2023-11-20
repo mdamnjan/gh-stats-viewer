@@ -8,9 +8,7 @@ const CommitList = ({ commits, isLoading, error }) => {
       style={{
         minWidth: "0px",
         minHeight: "150px",
-        position: "absolute",
         height: " calc(100% - 40px)",
-        width: "calc(100% - 25px)",
       }}
     >
       <div className="card-body">

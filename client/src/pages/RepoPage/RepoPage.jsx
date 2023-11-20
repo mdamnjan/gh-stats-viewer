@@ -85,7 +85,7 @@ const RepoPage = () => {
     <>
       <BackButton to={`/users/${username}`} />
       <div id="repo-page" style={{ marginTop: "40px" }}>
-        <h1>
+        <h1 style={{margin: "0px 10px"}}>
           <a href={repoDetails?.data?.results?.html_url}>
             {repoDetails?.data?.results?.full_name}
           </a>
