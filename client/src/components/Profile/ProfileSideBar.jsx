@@ -20,7 +20,7 @@ const ProfileSideBar = ({ user, isLoading, error }) => {
         )}
         {error && (
           <div className="user-details">
-            <span>Error: {error.response.status}</span>
+            <span>Error: {error.response?.status}</span>
           </div>
         )}
       </div>

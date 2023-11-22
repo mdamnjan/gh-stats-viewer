@@ -8,7 +8,7 @@ import BarChart from "../../components/Widgets/Charts/BarChart";
 const UserOverview = ({ username, userData }) => {
   const userClient = new UserClient(username);
 
-  const [userEvents, userLanguages] = useQueries([
+  const [userEvents, userLanguages, userStars] = useQueries([
     {
       queryKey: ["userEvents"],
       queryFn: () => userClient.getUserEvents(),
@@ -21,9 +21,15 @@ const UserOverview = ({ username, userData }) => {
       initialData: [],
       retry: false,
     },
+    {
+      queryKey: ["userStars"],
+      queryFn: () => userClient.getUserStars(),
+      initialData: [],
+      retry: false,
+    },
   ]);
 
-  console.log("languages", userLanguages);
+  console.log("languages", userStars);
 
   return (
     <div>
@@ -34,7 +40,7 @@ const UserOverview = ({ username, userData }) => {
         <div>
           <NumberChart
             title="Followers"
-            data={userData.data.results.followers}
+            data={userData.data?.results?.followers}
             isLoading={userData.isLoading}
             error={userData.error}
           />
@@ -50,7 +56,7 @@ const UserOverview = ({ username, userData }) => {
         <div>
           <NumberChart
             title="Public Repos"
-            data={userData.data.results.public_repos}
+            data={userData.data?.results?.public_repos}
             isLoading={userData.isLoading}
             error={userData.error}
           />
@@ -75,6 +81,22 @@ const UserOverview = ({ username, userData }) => {
             data={userLanguages.data.results}
             isLoading={userLanguages.isLoading}
             error={userLanguages.error}
+          />
+        </div>
+        <div>
+          <BarChart
+            title="User Stars"
+            data={userStars.data.results.top10Repos}
+            isLoading={userStars.isLoading}
+            error={userStars.error}
+          />
+        </div>
+        <div>
+          <NumberChart
+            title="Total Stars"
+            data={userStars.data.results?.starCount}
+            isLoading={userStars.isLoading}
+            error={userStars.error}
           />
         </div>
       </div>

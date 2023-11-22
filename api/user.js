@@ -49,7 +49,7 @@ export async function getUserLanguages(req, res, next) {
 
   const processResults = (results) => {
     let languagesAggregate = {};
-    
+
     results.repositoryOwner.repositories.nodes.forEach((repoNode) => {
       repoNode.languages.edges.forEach((edge) => {
         if (languagesAggregate[edge.node.name]) {
@@ -81,6 +81,39 @@ export async function getUserLanguages(req, res, next) {
         }
       }
     }`,
+    dataHandlerFn: processResults,
+  });
+}
+
+export async function getUserStarCount(req, res, next) {
+  const GhApi = new GhApiClient({ req, res, next });
+
+  const processResults = (results) => {
+    let repos = results.repositoryOwner.repositories.nodes;
+
+    const starCount = repos.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.stargazerCount,
+      0
+    );
+
+    const top10Repos = Object.fromEntries(
+      repos.slice(0, 10).map((item) => [item.name, item.stargazerCount])
+    );
+
+    return { starCount: starCount, top10Repos: top10Repos };
+  };
+
+  return GhApi.graphql({
+    query: `query {
+    repositoryOwner(login: "${req.query.user}") {
+      repositories(last:100, orderBy: {field: STARGAZERS, direction: DESC}) {
+        nodes {
+         name
+         stargazerCount
+        }
+      }
+    }
+  }`,
     dataHandlerFn: processResults,
   });
 }

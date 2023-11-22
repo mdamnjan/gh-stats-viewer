@@ -82,6 +82,10 @@ export class UserClient {
   async getUserLanguages() {
     return fetchData(`user-languages?user=${this.username}`)
   }
+
+  async getUserStars() {
+    return fetchData(`user-stars?user=${this.username}`)
+  }
 }
 
 export const fetchData = async (url) => {
