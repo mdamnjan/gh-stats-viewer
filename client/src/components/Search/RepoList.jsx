@@ -21,7 +21,7 @@ const RepoList = ({ repos, error, isLoading }) => {
           }}
         >
           <ExclamationTriangle style={{ marginRight: "5px" }} />
-          <span style={{ width: "80%" }}>{error.response.data}</span>
+          <span style={{ width: "80%" }}>{error.response?.data}</span>
         </div>
       )}
       {(isLoading) && (
