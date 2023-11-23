@@ -16,7 +16,7 @@ export async function searchRepos(req, res, next) {
     req,
     res,
     next,
-    url: `GET /search/repositories?q=${q}&page=${req.query.page}&per_page=${req.query.per_page}`,
+    url: `GET /search/repositories?q=${q}&page=${req.query.page}&per_page=${req.query.per_page}&sort=updated`,
   }).then((results) => res.json(results));
 }
 
