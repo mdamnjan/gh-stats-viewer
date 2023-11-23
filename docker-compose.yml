@@ -1,6 +1,9 @@
 version: "1"
 services:
   react-app:
+    environment:
+      - REACT_APP_SERVER_URL=${SERVER_URL}
+      - REACT_APP_NODE_ENV=${NODE_ENV}
     build: ./client
     stdin_open: true
     ports:
@@ -9,6 +12,15 @@ services:
       - react-express
     
   api-server:
+    environment:
+      - CLIENT_ID=${GH_CLIENT_ID}
+      - CLIENT_SECRET=${GH_CLIENT_SECRET}
+      - NODE_ENV=${NODE_ENV}
+      - DOMAIN=${DOMAIN}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - GH_TOKEN=${GH_TOKEN}
+      - SERVER_URL=${SERVER_URL}
+      - CLIENT_URL=${CLIENT_URL}
     build: .
     ports:
       - "4000:4000"
