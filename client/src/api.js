@@ -6,10 +6,12 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-export const search = async ({ resource, searchTerm, page, perPage }) => {
-  return axiosInstance.get(
-    `/search/${resource}?q=${searchTerm}&page=${page}&per_page=${perPage}`
-  );
+export const search = async ({ resource, searchTerm, page, perPage, user }) => {
+  let url = `/search/${resource}?q=${searchTerm}&page=${page}&per_page=${perPage}`;
+  if (user) {
+    url = `/search/${resource}?q=${user}/${searchTerm}&page=${page}&per_page=${perPage}`
+  }
+  return axiosInstance.get(url);
 };
 
 export class RepoClient {
