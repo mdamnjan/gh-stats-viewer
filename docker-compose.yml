@@ -13,8 +13,8 @@ services:
     
   api-server:
     environment:
-      - CLIENT_ID=${GH_CLIENT_ID}
-      - CLIENT_SECRET=${GH_CLIENT_SECRET}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
       - NODE_ENV=${NODE_ENV}
       - DOMAIN=${DOMAIN}
       - SESSION_SECRET=${SESSION_SECRET}
