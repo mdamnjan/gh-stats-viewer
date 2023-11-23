@@ -1,0 +1,20 @@
+version: "1"
+services:
+  react-app:
+    build: ./client
+    stdin_open: true
+    ports:
+      - "3000:80"
+    networks:
+      - react-express
+    
+  api-server:
+    build: .
+    ports:
+      - "4000:4000"
+    networks:
+      - react-express
+
+networks:
+  react-express:
+    driver: bridge
