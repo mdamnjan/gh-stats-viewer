@@ -24,7 +24,7 @@ const RepoList = ({ repos, error, isLoading }) => {
           <span style={{ width: "80%" }}>{error.response.data}</span>
         </div>
       )}
-      {isLoading && (
+      {(isLoading || !repos) && (
         <>
           <Card key={1} isLoading={isLoading} />
           <Card key={2} isLoading={isLoading} />

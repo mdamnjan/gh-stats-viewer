@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import Card from "../Card/Card";
 
-const SearchItem = ({ type, data }) => {
+const SearchItem = ({ type, data, isLoading }) => {
   const navigate = useNavigate();
-  if (type === "user") {
+  if (type === "users") {
     return (
       <div
         tabIndex={0}
@@ -33,9 +34,15 @@ const SearchItem = ({ type, data }) => {
       </div>
     );
   }
-  if (type === "repo") {
-    // TODO
-    return;
+  if (type === "repos") {
+    return (
+      <Card
+        key={data.id}
+        isLoading={isLoading}
+        // onClick={() => navigate(`/repos/${data.login}/${repo.name}`)}
+        repo={data}
+      ></Card>
+    );
   }
 };
 export default SearchItem;

@@ -1,0 +1,14 @@
+.contents > .search-results {
+    max-width: none;
+    margin: auto;
+}
+
+.contents > form > .search-bar {
+    width: 100%;
+    max-width: none;
+    margin-top: 20px;
+}
+
+.contents {
+    max-width: 1400px;
+}
