@@ -1,16 +1,10 @@
-import SearchItem from "./SearchItem";
+import RepoList from "./RepoList";
+import UserList from "./UserList";
 
-const SearchList = ({ type, page }) => {
-  return page.data.items.map((item) => {
-    return <SearchItem type={type} data={item} />;
-  });
-};
-
-const SearchResults = ({ type, hasNextPage, pages, error, showMore }) => {
+const SearchResults = ({ type, hasNextPage, pages, error, showMore, isLoading }) => {
   if (error) {
     return <div class="search-results">{error && <p>{error.message}</p>}</div>;
   }
-  console.log("in search restults", pages);
   if (!pages[0]) {
     return;
   }
@@ -32,12 +26,16 @@ const SearchResults = ({ type, hasNextPage, pages, error, showMore }) => {
     <div aria-label="Search Results" class="search-results">
       {
         <p class="fw-lighter">
-          {firstPage.total_count.toLocaleString()} results found
+          {firstPage.total_count.toLocaleString()} result(s) found {type==='repos' && "(excluding forks)"}
         </p>
       }
-      {pages.map((page) => (
-        <SearchList type={type} page={page} />
-      ))}
+      {pages.map((page) =>
+        type === "repos" ? (
+          <RepoList repos={page.data.items} isLoading={isLoading} error={error} />
+        ) : (
+          <UserList users={page.data.items} />
+        )
+      )}
       {hasNextPage && (
         <button class="btn btn-secondary" onClick={showMore}>
           Show More

@@ -6,12 +6,13 @@ import { useQueries } from "react-query";
 import { UserClient } from "../../api";
 
 import "../../App.css";
+import "./UserPage.css"
 
 import BackButton from "../../components/common/BackButton";
 import Tabs from "../../components/Tabs/Tabs";
 import ProfileSideBar from "../../components/Profile/ProfileSideBar";
-import RepoList from "./RepoList";
 import UserOverview from "./UserOverview";
+import Search from "../../components/Search/Search";
 
 const UserPage = () => {
   const [isRepoView, setIsRepoView] = useState(true);
@@ -20,17 +21,11 @@ const UserPage = () => {
 
   const userClient = new UserClient(username);
 
-  const [userData, repos] = useQueries([
+  const [userData] = useQueries([
     {
       queryKey: ["userData"],
       queryFn: () => userClient.getUserDetails(),
       initialData: [],
-      retry: false,
-    },
-    {
-      queryKey: ["userRepos"],
-      queryFn: () => userClient.getUserRepos(),
-      initialData: { results: [] },
       retry: false,
     },
   ]);
@@ -58,13 +53,7 @@ const UserPage = () => {
         {!isRepoView && (
           <UserOverview username={username} userData={userData} />
         )}
-        {isRepoView && (
-          <RepoList
-            repos={repos.data.results}
-            isLoading={repos.isLoading}
-            error={repos.error}
-          />
-        )}
+        {isRepoView && <Search resource="repos" user={username} />}
       </div>
     </>
   );
