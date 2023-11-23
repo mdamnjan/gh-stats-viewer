@@ -8,9 +8,14 @@ const axiosInstance = axios.create({
 
 export const search = async ({ resource, searchTerm, page, perPage, user }) => {
   let url = `/search/${resource}?q=${searchTerm}&page=${page}&per_page=${perPage}`;
+
   if (user) {
-    url = `/search/${resource}?q=${user}/${searchTerm}&page=${page}&per_page=${perPage}`
+    url = `/search/${resource}?q=${user}/${searchTerm}&page=${page}&per_page=${perPage}`;
   }
+  if (!searchTerm || searchTerm.length < 1) {
+    url = `/search/${resource}?q=user:${user}&page=${page}&per_page=${perPage}`;
+  }
+
   return axiosInstance.get(url);
 };
 
