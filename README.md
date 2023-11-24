@@ -55,9 +55,10 @@ If you choose to run the app locally, the rate limit will also be set to your Gi
  
 ## Tech Stack 🔨 
  - `Node.js` and `Express` backend acting as a wrapper around GitHub's `REST` and `GraphQL` endpoints
- - React
- - Chart.js for pretty charts 📈📊📉
- - Bootstrap
- - GitHub API `GraphQL` and `REST` endpoints
- - Octokit.js - GitHub's handy js library for interacting with the GitHub API
- - Docker
+ - `React`
+ - `Chart.js` for pretty charts 📈📊📉
+ - `Bootstrap`
+ -  GitHub's `REST` and `GraphQL` API endpoints
+ - `Octokit.js` - GitHub's handy js library for interacting with the GitHub API
+ - `Passport.js` for GitHub `Oauth`
+ - `Docker`
