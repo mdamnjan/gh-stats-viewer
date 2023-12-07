@@ -1,4 +1,4 @@
-import { GhApiClient } from "./utils.js";
+import { GhApiClient, getOctokit } from "./utils.js";
 
 export async function getUser(req, res, next) {
   const GhApi = new GhApiClient({ req, res, next });
@@ -63,9 +63,9 @@ export async function getUserLanguages(req, res, next) {
   };
 
   return GhApi.graphql({
-    query: `query {
-      repositoryOwner(login: "${req.query.user}") {
-        repositories(last:100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+    query: `query userLanguages($owner: String!) {
+      repositoryOwner(login: $owner) {
+        repositories(last:100, isFork:false, orderBy: {field: PUSHED_AT, direction: DESC}) {
           nodes {
             name
             languages(last:100) {
@@ -81,6 +81,7 @@ export async function getUserLanguages(req, res, next) {
         }
       }
     }`,
+    vars: { owner: req.query.user },
     dataHandlerFn: processResults,
   });
 }
@@ -96,24 +97,54 @@ export async function getUserStarCount(req, res, next) {
       0
     );
 
+    let sortedRepos = repos.sort((a, b)=>b.stargazerCount - a.stargazerCount)
+    console.log(sortedRepos)
+
     const top10Repos = Object.fromEntries(
-      repos.slice(0, 10).map((item) => [item.name, item.stargazerCount])
+      sortedRepos.slice(0,10).map((item) => [item.name, item.stargazerCount])
     );
 
     return { starCount: starCount, top10Repos: top10Repos };
   };
 
-  return GhApi.graphql({
-    query: `query {
-    repositoryOwner(login: "${req.query.user}") {
-      repositories(last:100, orderBy: {field: STARGAZERS, direction: DESC}) {
-        nodes {
-         name
-         stargazerCount
+  let octokit = getOctokit(req);
+  let results = await octokit.graphql(
+    `query userStarsInitial($owner: String!) {
+    repositoryOwner(login: $owner) {
+      repositories(first:100, ownerAffiliations:[OWNER], isFork:false, orderBy: {field: STARGAZERS, direction: DESC}) {
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
         }
       }
     }
   }`,
+    { owner: req.query.user }
+  );
+
+  let pageInfo = results.repositoryOwner.repositories.pageInfo;
+  return GhApi.graphql({
+    query: `query userStars($owner: String!, $cursor: String!) {
+    repositoryOwner(login: $owner) {
+      repositories(first:100, ownerAffiliations:[OWNER], isFork:false, after: $cursor, orderBy: {field: STARGAZERS, direction: DESC}) {
+        nodes {
+         name
+         nameWithOwner
+         owner {
+          login
+         }
+         stargazerCount
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }`,
+    paginate: true,
+    vars: { owner: req.query.user, cursor: pageInfo.startCursor },
     dataHandlerFn: processResults,
   });
 }

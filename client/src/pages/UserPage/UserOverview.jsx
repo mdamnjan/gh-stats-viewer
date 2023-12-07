@@ -45,18 +45,26 @@ const UserOverview = ({ username, userData }) => {
             error={userData.error}
           />
         </div>
-        {/* <div>
+        <div>
           <NumberChart
-            title="Following"
-            data={userData.data.results.following}
-            isLoading={userData.isLoading}
-            error={userData.error}
+            title="Total Stars"
+            data={userStars.data.results?.starCount}
+            isLoading={userStars.isLoading}
+            error={userStars.error}
           />
-        </div> */}
+        </div>
         <div>
           <NumberChart
             title="Public Repos"
             data={userData.data?.results?.public_repos}
+            isLoading={userData.isLoading}
+            error={userData.error}
+          />
+        </div>
+        <div>
+          <NumberChart
+            title="Following"
+            data={userData.data.results.following}
             isLoading={userData.isLoading}
             error={userData.error}
           />
@@ -85,16 +93,8 @@ const UserOverview = ({ username, userData }) => {
         </div>
         <div>
           <BarChart
-            title="User Stars"
-            data={userStars.data.results.top10Repos}
-            isLoading={userStars.isLoading}
-            error={userStars.error}
-          />
-        </div>
-        <div>
-          <NumberChart
-            title="Total Stars"
-            data={userStars.data.results?.starCount}
+            title="Top 10 Repos (# of stars)"
+            data={userStars.data.results?.top10Repos}
             isLoading={userStars.isLoading}
             error={userStars.error}
           />
