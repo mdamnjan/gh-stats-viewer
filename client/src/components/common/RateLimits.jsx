@@ -12,17 +12,17 @@ const RateLimits = ({ rateLimit }) => {
           reset every 60 seconds
         </p>
       </div>
-      <div className="badge text-bg-secondary">
+      <div className="badge text-bg-secondary" style={{margin: "5px"}}>
         <span className="h6">
           {"Search"}: {`${limits.search.remaining}/${limits.search.limit}`}
         </span>
       </div>
-      <div className="badge text-bg-secondary">
+      <div className="badge text-bg-secondary" style={{margin: "5px"}}>
         <span className="h6">
           {"REST"}: {`${limits.core.remaining}/${limits.core.limit}`}
         </span>
       </div>
-      <div className="badge text-bg-secondary">
+      <div className="badge text-bg-secondary" style={{margin: "5px"}}>
         <span className="h6">
           {"GraphQL"}: {`${limits.graphql.remaining}/${limits.graphql.limit}`}
         </span>
