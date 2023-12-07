@@ -1,4 +1,5 @@
 import { Octokit } from "@octokit/rest";
+import { paginateGraphql } from "@octokit/plugin-paginate-graphql";
 
 export const port = process.env.PORT || 4000;
 
@@ -14,12 +15,15 @@ export const SERVER_URL =
 
 export function getOctokit(req) {
   let octokit;
+
+  let MyOctokit = Octokit.plugin(paginateGraphql);
+
   if (req.isAuthenticated()) {
-    octokit = new Octokit({ auth: req.user.token });
+    octokit = new MyOctokit({ auth: req.user.token });
   } else if (process.env.GH_TOKEN) {
-    octokit = new Octokit({ auth: process.env.GH_TOKEN });
+    octokit = new MyOctokit({ auth: process.env.GH_TOKEN });
   } else {
-    octokit = new Octokit({});
+    octokit = new MyOctokit({});
   }
   return octokit;
 }
@@ -45,16 +49,34 @@ export class GhApiClient {
     }
   }
 
-  async graphql({ query, dataHandlerFn }) {
+  async graphql({
+    query,
+    vars,
+    dataHandlerFn,
+    getPageInfo = undefined,
+    paginate = false,
+  }) {
     let results;
     try {
-      results = await this.octokit.graphql(query);
+      if (paginate) {
+        results = await this.octokit.graphql.paginate(query, vars);
+      } else {
+        results = await this.octokit.graphql(query, vars);
+      }
     } catch (error) {
       return this.next(error, this.req, this.res, this.next);
     }
     if (results) {
       if (dataHandlerFn) {
-        results = dataHandlerFn(results)
+        results = dataHandlerFn(results);
+      }
+      if (getPageInfo) {
+        const pageInfo = getPageInfo(results);
+        try {
+          results = await this.octokit.graphql(query);
+        } catch (error) {
+          return this.next(error, this.req, this.res, this.next);
+        }
       }
       return this.res.json(results);
     }
