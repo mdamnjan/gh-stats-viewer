@@ -1,11 +1,11 @@
 import "./ProfileSideBar.css";
 
 const ProfileSideBar = ({ user, isLoading, error }) => {
-  if (isLoading || error) {
+  if (!user || isLoading || error) {
     return (
       <div data-bs-theme="dark" className="user-profile placeholder-glow">
         <img id="user-avatar" alt="User's avatar" src={user?.avatar_url}></img>
-        {isLoading && (
+        {(!user || isLoading) && (
           <div className="user-details">
             <h4 className="h4 placeholder col-4">
               <span />
