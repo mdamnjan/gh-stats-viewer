@@ -6,7 +6,7 @@ const BackButton = ({ to }) => {
     <Link
       class="btn btn-dark"
       to={to}
-      style={{ position: "absolute", left: "20px" }}
+      style={{ position: "absolute", left: "20px", top: "80px" }}
     >
       <ArrowLeftCircle width={24} height={24} />
     </Link>
