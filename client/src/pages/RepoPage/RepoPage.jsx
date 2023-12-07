@@ -138,7 +138,7 @@ const RepoPage = () => {
             </div>
             <div style={{ position: "relative" }}>
               <CommitList
-                commits={commits?.data?.results?.slice(-5, -1) || []}
+                commits={commits?.data?.results?.slice(-6, -1) || []}
                 isLoading={commits.isLoading}
                 error={commits.error}
               />
@@ -155,7 +155,7 @@ const RepoPage = () => {
             </div>
             <div>
               <LineChart
-                title="Events"
+                title="Repo Events (this week)"
                 data={events.data?.results}
                 isLoading={events.isLoading}
                 error={events.error}

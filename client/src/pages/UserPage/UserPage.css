@@ -12,3 +12,15 @@
 .contents {
     max-width: 1400px;
 }
+
+@media (max-width: 1200px) {
+    .row1 {
+      grid-template-columns: 1fr 1fr !important;
+    }
+  
+    .row2,
+    .row3,
+    .row4 {
+      grid-template-columns: 1fr !important;
+    }
+  }

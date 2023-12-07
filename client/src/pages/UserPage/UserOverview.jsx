@@ -5,6 +5,8 @@ import { useQueries } from "react-query";
 import { UserClient } from "../../api";
 import BarChart from "../../components/Widgets/Charts/BarChart";
 
+import "./UserPage.css"
+
 const UserOverview = ({ username, userData }) => {
   const userClient = new UserClient(username);
 
@@ -35,7 +37,7 @@ const UserOverview = ({ username, userData }) => {
     <div>
       <div
         className="row row1"
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }}
       >
         <div>
           <NumberChart
@@ -75,12 +77,11 @@ const UserOverview = ({ username, userData }) => {
         style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
       >
         <div>
-          <LineChart
-            data={userEvents.data.results}
-            isLoading={userData.isLoading}
-            error={userData.error}
-            title="User events"
-            type="event"
+          <BarChart
+            title="Top 10 Repos (# of stars)"
+            data={userStars.data.results?.top10Repos}
+            isLoading={userStars.isLoading}
+            error={userStars.error}
           />
         </div>
         <div>
@@ -91,12 +92,18 @@ const UserOverview = ({ username, userData }) => {
             error={userLanguages.error}
           />
         </div>
+      </div>
+      <div
+        className="row row3"
+        style={{ display: "grid", gridTemplateColumns: "1fr" }}
+      >
         <div>
-          <BarChart
-            title="Top 10 Repos (# of stars)"
-            data={userStars.data.results?.top10Repos}
-            isLoading={userStars.isLoading}
-            error={userStars.error}
+          <LineChart
+            data={userEvents.data.results}
+            isLoading={userData.isLoading}
+            error={userData.error}
+            title="User events (this week)"
+            type="event"
           />
         </div>
       </div>

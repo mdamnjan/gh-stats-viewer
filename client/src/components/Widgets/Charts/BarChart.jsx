@@ -61,23 +61,13 @@ const BarChart = ({ data, isLoading, error, title, type, status }) => {
   } else {
     options = {
       ...options,
-      scales: {
-        x: {
-          min: 0,
-          max: 100,
-        },
-      },
     };
 
     labels = data ? Object.keys(data) : [];
-    const initialVal = 0;
-    const total = data
-      ? Object.values(data).reduce((cursum, val) => cursum + val, initialVal)
-      : 0;
 
     labels.forEach((label) => {
       if (data && data[label]) {
-        processedData[label] = (100 * data[label]) / total;
+        processedData[label] = data[label]
       } else {
         processedData[label] = 0;
       }
