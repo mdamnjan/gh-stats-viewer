@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/mdamnjan/repo-viewer#readme",
   "dependencies": {
+    "@octokit/plugin-paginate-graphql": "^4.0.0",
     "@octokit/plugin-paginate-rest": "^9.0.0",
     "@octokit/request-error": "^5.0.1",
     "@octokit/rest": "^20.0.1",
