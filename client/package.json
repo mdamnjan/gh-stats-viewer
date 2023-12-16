@@ -12,7 +12,7 @@
     "chart.js": "^4.3.0",
     "dotenv": "^16.3.1",
     "js-cookie": "^3.0.5",
-    "octokit": "^2.0.19",
+    "octokit": "^3.1.2",
     "react": "^18.2.0",
     "react-bootstrap-icons": "^1.10.3",
     "react-chartjs-2": "^5.2.0",
