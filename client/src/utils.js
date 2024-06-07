@@ -55,7 +55,6 @@ export const fetchData = async ({ url, setData, setError, setIsLoading }) => {
       withCredentials: true,
     })
     .catch((error) => {
-      console.log("repo stats error", error);
       if (setError) {
         setError(error);
       }
@@ -64,7 +63,6 @@ export const fetchData = async ({ url, setData, setError, setIsLoading }) => {
     setIsLoading(false);
   }
   if (results) {
-    console.log(url, results.data);
     setData(results.data);
   }
 };

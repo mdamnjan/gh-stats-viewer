@@ -29,6 +29,19 @@
     width: 90%;
 }
 
+
+.row1 > div > .card {
+  height: 200px !important;
+}
+
+.row2 > div > .card {
+  height: 400px !important;
+}
+
+.row3 > div > .card, .row4 > div > .card {
+  height: 300px !important;
+}
+
 .row {
   display: grid !important;
 }

@@ -97,19 +97,17 @@ export async function getUserStarCount(req, res, next) {
       0
     );
 
-    let sortedRepos = repos.sort((a, b)=>b.stargazerCount - a.stargazerCount)
-    console.log(sortedRepos)
+    let sortedRepos = repos.sort((a, b) => b.stargazerCount - a.stargazerCount);
 
     const top10Repos = Object.fromEntries(
-      sortedRepos.slice(0,10).map((item) => [item.name, item.stargazerCount])
+      sortedRepos.slice(0, 10).map((item) => [item.name, item.stargazerCount])
     );
 
     return { starCount: starCount, top10Repos: top10Repos };
   };
 
-  let octokit = getOctokit(req);
-  let results = await octokit.graphql(
-    `query userStarsInitial($owner: String!) {
+  let results = await GhApi.graphql({
+    query: `query userStarsInitial($owner: String!) {
     repositoryOwner(login: $owner) {
       repositories(first:100, ownerAffiliations:[OWNER], isFork:false, orderBy: {field: STARGAZERS, direction: DESC}) {
         pageInfo {
@@ -120,8 +118,12 @@ export async function getUserStarCount(req, res, next) {
       }
     }
   }`,
-    { owner: req.query.user }
-  );
+    vars: { owner: req.query.user },
+  });
+
+  if (!results) {
+    return
+  }
 
   let pageInfo = results.repositoryOwner.repositories.pageInfo;
   return GhApi.graphql({

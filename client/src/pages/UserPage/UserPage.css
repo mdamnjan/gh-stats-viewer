@@ -1,26 +1,38 @@
 .contents > .search-results {
-    max-width: none;
-    margin: auto;
+  max-width: none;
+  margin: auto;
 }
 
 .contents > form > .search-bar {
-    width: 100%;
-    max-width: none;
-    margin-top: 20px;
+  width: 100%;
+  max-width: none;
+  margin-top: 20px;
 }
 
 .contents {
-    max-width: 1400px;
+  max-width: 1400px;
+}
+
+.row1 > div > .card {
+  height: 200px !important;
+}
+
+.row2 > div > .card {
+  height: 300px !important;
+}
+
+.row3 > div > .card {
+  height: 400px !important;
 }
 
 @media (max-width: 1200px) {
-    .row1 {
-      grid-template-columns: 1fr 1fr !important;
-    }
-  
-    .row2,
-    .row3,
-    .row4 {
-      grid-template-columns: 1fr !important;
-    }
+  .row1 {
+    grid-template-columns: 1fr 1fr !important;
   }
+
+  .row2,
+  .row3,
+  .row4 {
+    grid-template-columns: 1fr !important;
+  }
+}

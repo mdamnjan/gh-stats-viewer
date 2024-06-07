@@ -31,8 +31,6 @@ function App() {
     },
   });
 
-  console.log("rate limit", rateLimit);
-
   const handleLogin = () => {
     window.location = `${SERVER_URL}/auth/github`;
   };

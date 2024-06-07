@@ -5,7 +5,7 @@ import { useQueries } from "react-query";
 import { UserClient } from "../../api";
 import BarChart from "../../components/Widgets/Charts/BarChart";
 
-import "./UserPage.css"
+import "./UserPage.css";
 
 const UserOverview = ({ username, userData }) => {
   const userClient = new UserClient(username);
@@ -50,7 +50,7 @@ const UserOverview = ({ username, userData }) => {
         <div>
           <NumberChart
             title="Total Stars"
-            data={userStars.data.results?.starCount}
+            data={userStars.data?.results?.starCount}
             isLoading={userStars.isLoading}
             error={userStars.error}
           />
@@ -66,7 +66,7 @@ const UserOverview = ({ username, userData }) => {
         <div>
           <NumberChart
             title="Following"
-            data={userData.data.results.following}
+            data={userData.data?.results?.following}
             isLoading={userData.isLoading}
             error={userData.error}
           />
@@ -79,7 +79,7 @@ const UserOverview = ({ username, userData }) => {
         <div>
           <BarChart
             title="Top 10 Repos (# of stars)"
-            data={userStars.data.results?.top10Repos}
+            data={userStars.data?.results?.top10Repos}
             isLoading={userStars.isLoading}
             error={userStars.error}
           />
@@ -87,7 +87,7 @@ const UserOverview = ({ username, userData }) => {
         <div>
           <BarChart
             title="User Languages"
-            data={userLanguages.data.results}
+            data={userLanguages?.data?.results}
             isLoading={userLanguages.isLoading}
             error={userLanguages.error}
           />
@@ -99,7 +99,7 @@ const UserOverview = ({ username, userData }) => {
       >
         <div>
           <LineChart
-            data={userEvents.data.results}
+            data={userEvents?.data?.results}
             isLoading={userData.isLoading}
             error={userData.error}
             title="User events (this week)"
