@@ -1,7 +1,7 @@
 import "./ProfileSideBar.css";
 
 const ProfileSideBar = ({ user, isLoading, error }) => {
-  if (!user || isLoading || error) {
+  if (isLoading) {
     return (
       <div data-bs-theme="dark" className="user-profile placeholder-glow">
         <img id="user-avatar" alt="User's avatar" src={user?.avatar_url}></img>
@@ -21,6 +21,19 @@ const ProfileSideBar = ({ user, isLoading, error }) => {
         {error && (
           <div className="user-details">
             <span>Error: {error.response?.status}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div data-bs-theme="dark" className="user-profile placeholder-glow">
+        <img id="user-avatar" alt="User's avatar" src={user?.avatar_url}></img>
+        {error && (
+          <div className="user-details">
+            <span>Error: {error.response?.data?.message}</span>
           </div>
         )}
       </div>

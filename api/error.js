@@ -5,26 +5,28 @@ export function errorHandler(err, req, res, next) {
       res.send({
         message: "Unauthorized, you do not have access to this resource.",
       });
-      return
+      return;
     }
     if (err.status == 403) {
-      if (!req.isAuthenticated() && err.response.headers['x-ratelimit-resource'] == "graphql") {
+      if (
+        !req.isAuthenticated() &&
+        err.response.headers["x-ratelimit-resource"] == "graphql"
+      ) {
         res.send({
-          message:
-            "Sorry, you must be signed in with GitHub to see this data.",
+          message: "Sorry, you must be signed in with GitHub to see this data.",
         });
-      }
-      else {
+      } else {
         res.send({
           message:
             "Rate limit exceeded, please sign in with GitHub to continue using the GitHub REST API.",
-        });      }
+        });
+      }
 
-      return
+      return;
     }
   }
   if (err.message) {
     res.send(err.message);
   }
-  return
+  return;
 }

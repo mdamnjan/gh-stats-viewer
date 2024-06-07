@@ -39,7 +39,7 @@ const BaseWidget = ({ children, error, isLoading, status, style }) => {
   if (error) {
     return (
       <EmptyState style={style}>
-        <span>{error.response.data.message}</span>
+        <span>{error.response? error.response.data.message: error.message}</span>
       </EmptyState>
     );
   }

@@ -31,8 +31,6 @@ const UserOverview = ({ username, userData }) => {
     },
   ]);
 
-  console.log("languages", userStars);
-
   return (
     <div>
       <div
